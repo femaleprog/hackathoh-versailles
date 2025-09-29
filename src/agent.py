@@ -121,7 +121,10 @@ class Agent:
 
     async def _internal_streamer(self, query) -> AsyncGenerator[str, None]:
         try:
-            handler = self.agent.run(query)
+            today_date = datetime.now().strftime("%Y-%m-%d")
+            handler = self.agent.run(
+                f"Today's date is {today_date}, use only if it's need." + query
+            )
 
             async for event in handler.stream_events():
                 if isinstance(event, AgentStream):

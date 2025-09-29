@@ -17,6 +17,8 @@ def scrape_versailles_schedule(date_str: str) -> str:
         str: A JSON string containing the schedule information for different
              locations, or an error message if scraping fails.
     """
+
+    print(f"Scraping schedule for date: {date_str}")
     # Validate the date format
     try:
         datetime.strptime(date_str, "%Y-%m-%d")
@@ -106,5 +108,7 @@ def scrape_versailles_schedule(date_str: str) -> str:
             location_info["details"] = "Not specified"
 
         schedule_data.append(location_info)
+
+    print(f"Scraped data: {schedule_data}")
 
     return json.dumps(schedule_data, indent=4, ensure_ascii=False)
