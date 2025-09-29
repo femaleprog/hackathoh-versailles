@@ -6,7 +6,7 @@ API_KEY = os.getenv("GOOGLE_API_KEY")
 
 
 def search_places_in_versailles(
-    query,
+    query: str,
     fields: list[str] = ["places.displayName", "places.formattedAddress", "places.id"],
 ):
     if "Versailles" not in query:
