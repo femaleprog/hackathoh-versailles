@@ -4,6 +4,9 @@
       <header class="chat-header">
         <h1>Le Scribe Royal</h1>
         <p>Votre humble serviteur digital</p>
+        <button @click="clearChat" class="clear-chat-btn">
+          Effacer la Conversation
+        </button>
         <button @click="toggleMap" class="map-toggle-btn">
           {{ isMapOpen ? "Fermer la Carte" : "Ouvrir la Carte" }}
         </button>
@@ -44,7 +47,6 @@
 import MessageDisplay from "@/components/MessageDisplay.vue";
 import UserInput from "@/components/UserInput.vue";
 import MapDisplay from "@/components/MapDisplay.vue";
-// NEW: Import 'computed' from Vue
 import { ref, computed } from "vue";
 import routeJsonData from "@/route-data.json";
 
@@ -59,13 +61,7 @@ export default {
     const isMapOpen = ref(false);
     const routeJson = ref(routeJsonData);
     const selectedLegIndex = ref(0);
-    const messages = ref([
-      {
-        id: 1,
-        text: "Bonjour, Noble Visiteur. Comment puis-je vous assister en ce jour radieux ?",
-        sender: "bot",
-      },
-    ]);
+    const messages = ref([]);
 
     const selectLeg = (index) => {
       selectedLegIndex.value = index;
@@ -75,7 +71,10 @@ export default {
       isMapOpen.value = !isMapOpen.value;
     };
 
-    // --- NEW: Computed property to get current leg details ---
+    const clearChat = () => {
+      messages.value = [];
+    };
+
     const currentLegDetails = computed(() => {
       const leg = routeJson.value?.routes?.[0]?.legs?.[selectedLegIndex.value];
       if (!leg) return null;
@@ -86,9 +85,9 @@ export default {
       };
     });
 
-    // ... (handleNewMessage function remains the same)
     const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
-    const mistralApiUrl = "https://api.mistral.ai/v1/chat/completions";
+    // const mistralApiUrl = "https://api.mistral.ai/v1/chat/completions";
+    const mistralApiUrl = "http://localhost:8000/v1/chat/completions";
 
     const handleNewMessage = async (newMessageText) => {
       // 1. Add user message to the UI
@@ -122,7 +121,7 @@ export default {
             Authorization: `Bearer ${apiKey}`,
           },
           body: JSON.stringify({
-            model: "mistral-medium-latest",
+            model: "mistral-medium-2508",
             messages: apiMessages, // Send the entire history
             stream: true, // Enable streaming
           }),
@@ -189,12 +188,13 @@ export default {
     return {
       messages,
       handleNewMessage,
+      clearChat, // Expose the new function
       routeJson,
       selectedLegIndex,
       selectLeg,
       isMapOpen,
       toggleMap,
-      currentLegDetails, // Expose the new computed property
+      currentLegDetails,
     };
   },
 };
@@ -208,9 +208,8 @@ export default {
   --color-gold: #b38e55;
   --color-dark-blue: #0a192f;
   --border-light: #e0d8c5;
+  --color-danger: #d9534f; /* Added a danger color for the clear button */
 }
-
-/* ... (most styles remain the same) */
 
 .main-layout-container {
   display: flex;
@@ -244,7 +243,7 @@ export default {
 }
 
 .map-area {
-  flex: 0 0 0; /* Don't grow, don't shrink, start at 0 width */
+  flex: 0 0 0;
   width: 0;
   opacity: 0;
   height: 100vh;
@@ -255,9 +254,8 @@ export default {
     opacity 0.4s ease-in-out;
 }
 
-/* State when the map is open */
 .map-area.is-open {
-  flex-basis: 50%; /* Grow to take 50% of the space */
+  flex-basis: 50%;
   opacity: 1;
 }
 
@@ -310,7 +308,30 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* --- NEW: Styles for the leg details --- */
+.clear-chat-btn {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  padding: 8px 16px;
+  font-family: "Source Serif Pro", serif;
+  font-weight: 600;
+  border: 1px solid var(--border-light);
+  background-color: white;
+  color: var(--text-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.clear-chat-btn:hover {
+  background-color: var(--color-gold);
+  border-color: var(--color-gold);
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .leg-details {
   padding: 12px 20px;
   background-color: #fff;
@@ -336,7 +357,6 @@ export default {
   font-weight: bold;
   font-size: 1.2rem;
 }
-/* --- END NEW --- */
 
 .leg-selector {
   display: flex;
@@ -344,7 +364,6 @@ export default {
   align-items: center;
   padding: 10px;
   background-color: #fff;
-  /* border-top: 1px solid var(--border-light); /* This border is now on .leg-details */
   flex-shrink: 0;
   white-space: nowrap;
 }
