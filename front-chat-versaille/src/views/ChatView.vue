@@ -29,7 +29,13 @@ export default {
       },
     ]);
 
-    const handleNewMessage = (newMessageText) => {
+    // Retrieve the API key from environment variables
+    const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
+    console.log(apiKey);
+
+    const mistralApiUrl = "https://api.mistral.ai/v1/chat/completions";
+
+    const handleNewMessage = async (newMessageText) => {
       // Add user's message
       messages.value.push({
         id: Date.now(),
@@ -37,14 +43,51 @@ export default {
         sender: "user",
       });
 
-      // Placeholder bot response after a short delay
-      setTimeout(() => {
+      if (!apiKey) {
         messages.value.push({
           id: Date.now() + 1,
-          text: "Votre requête a été dûment notée. Je médite sur une réponse digne de votre rang. ✨",
+          text: "Hélas, la clé API de Mistral n'est pas configurée côté client.",
           sender: "bot",
         });
-      }, 1200);
+        return;
+      }
+
+      // Call the Mistral API directly from the browser
+      try {
+        const response = await fetch(mistralApiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: "mistral-large-latest",
+            messages: [{ role: "user", content: newMessageText }],
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        const botReply = data.choices[0].message.content;
+
+        // Add the AI's response
+        messages.value.push({
+          id: Date.now() + 1,
+          text: botReply,
+          sender: "bot",
+        });
+      } catch (error) {
+        console.error("Error calling Mistral API:", error);
+        messages.value.push({
+          id: Date.now() + 1,
+          text: "Hélas, une erreur est survenue lors de la communication avec le Scribe. Veuillez réessayer.",
+          sender: "bot",
+        });
+      }
     };
 
     return {
@@ -75,7 +118,6 @@ export default {
   border-left: 1px solid var(--border-light);
   border-right: 1px solid var(--border-light);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  /* Removed backdrop-filter for an opaque, readable background like ChatGPT */
 }
 
 .chat-header {
@@ -85,7 +127,7 @@ export default {
   text-align: center;
   border-bottom: 1px solid var(--border-light);
   font-family: "Cormorant Garamond", serif;
-  flex-shrink: 0; /* Prevents header from shrinking */
+  flex-shrink: 0;
 }
 
 .chat-header h1 {
