@@ -52,9 +52,6 @@ export default {
       const originString = `${origin.latitude},${origin.longitude}`;
       const destinationString = `${destination.latitude},${destination.longitude}`;
 
-      // --- FIX ---
-      // The previous URL was malformed. This uses the correct Google Maps
-      // Embed API endpoint and URL structure for directions.
       return `https://www.google.com/maps/embed/v1/directions?key=${googleApiKey}&origin=${originString}&destination=${destinationString}&mode=walking`;
     });
 

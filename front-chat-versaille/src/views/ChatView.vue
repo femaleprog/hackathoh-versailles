@@ -18,6 +18,14 @@
         :route-data="routeJson"
         :selected-leg-index="selectedLegIndex"
       />
+
+      <div class="leg-details" v-if="currentLegDetails">
+        <p>
+          <span class="location-start">{{ currentLegDetails.start }}</span>
+          <span class="arrow">→</span>
+          <span class="location-end">{{ currentLegDetails.end }}</span>
+        </p>
+      </div>
       <div class="leg-selector" v-if="routeJson?.routes?.[0]?.legs">
         <button
           v-for="(leg, index) in routeJson.routes[0].legs"
@@ -33,11 +41,11 @@
 </template>
 
 <script>
-// The <script> section remains unchanged.
 import MessageDisplay from "@/components/MessageDisplay.vue";
 import UserInput from "@/components/UserInput.vue";
 import MapDisplay from "@/components/MapDisplay.vue";
-import { ref } from "vue";
+// NEW: Import 'computed' from Vue
+import { ref, computed } from "vue";
 import routeJsonData from "@/route-data.json";
 
 export default {
@@ -48,12 +56,9 @@ export default {
     MapDisplay,
   },
   setup() {
-    // --- NEW: State for map visibility ---
-    const isMapOpen = ref(false); // Map is closed by default
-
+    const isMapOpen = ref(false);
     const routeJson = ref(routeJsonData);
     const selectedLegIndex = ref(0);
-
     const messages = ref([
       {
         id: 1,
@@ -66,11 +71,22 @@ export default {
       selectedLegIndex.value = index;
     };
 
-    // --- NEW: Function to toggle map visibility ---
     const toggleMap = () => {
       isMapOpen.value = !isMapOpen.value;
     };
 
+    // --- NEW: Computed property to get current leg details ---
+    const currentLegDetails = computed(() => {
+      const leg = routeJson.value?.routes?.[0]?.legs?.[selectedLegIndex.value];
+      if (!leg) return null;
+
+      return {
+        start: leg.startPlaceDetails,
+        end: leg.endPlaceDetails,
+      };
+    });
+
+    // ... (handleNewMessage function remains the same)
     const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
     const mistralApiUrl = "https://api.mistral.ai/v1/chat/completions";
 
@@ -176,8 +192,9 @@ export default {
       routeJson,
       selectedLegIndex,
       selectLeg,
-      isMapOpen, // Expose new state
-      toggleMap, // Expose new function
+      isMapOpen,
+      toggleMap,
+      currentLegDetails, // Expose the new computed property
     };
   },
 };
@@ -192,6 +209,8 @@ export default {
   --color-dark-blue: #0a192f;
   --border-light: #e0d8c5;
 }
+
+/* ... (most styles remain the same) */
 
 .main-layout-container {
   display: flex;
@@ -291,13 +310,41 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* --- NEW: Styles for the leg details --- */
+.leg-details {
+  padding: 12px 20px;
+  background-color: #fff;
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.leg-details p {
+  margin: 0;
+  font-family: "Source Serif Pro", serif;
+  color: var(--text-primary);
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.leg-details .arrow {
+  color: var(--color-gold);
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+/* --- END NEW --- */
+
 .leg-selector {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 10px;
   background-color: #fff;
-  border-top: 1px solid var(--border-light);
+  /* border-top: 1px solid var(--border-light); /* This border is now on .leg-details */
   flex-shrink: 0;
   white-space: nowrap;
 }
