@@ -1,3 +1,5 @@
+// src/views/ChatView.vue
+
 <template>
   <div class="main-layout-container">
     <div id="chat-container">
@@ -10,7 +12,21 @@
     </div>
 
     <div class="map-area">
-      <MapDisplay v-if="routeJson" :route-data="routeJson" />
+      <MapDisplay
+        v-if="routeJson"
+        :route-data="routeJson"
+        :selected-leg-index="selectedLegIndex"
+      />
+      <div class="leg-selector" v-if="routeJson?.routes?.[0]?.legs">
+        <button
+          v-for="(leg, index) in routeJson.routes[0].legs"
+          :key="index"
+          @click="selectLeg(index)"
+          :class="{ active: index === selectedLegIndex }"
+        >
+          {{ index + 1 }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -18,22 +34,22 @@
 <script>
 import MessageDisplay from "@/components/MessageDisplay.vue";
 import UserInput from "@/components/UserInput.vue";
-import MapDisplay from "@/components/MapDisplay.vue"; // 1. Import the new component
+import MapDisplay from "@/components/MapDisplay.vue";
 import { ref } from "vue";
-
-// 2. Import your JSON data
-import routeJsonData from "@/route-data.json"; // Assuming you save the JSON in 'src/route-data.json'
+import routeJsonData from "@/route-data.json";
 
 export default {
   name: "ChatView",
   components: {
     MessageDisplay,
     UserInput,
-    MapDisplay, // 3. Register the new component
+    MapDisplay,
   },
   setup() {
-    // 4. Store your JSON data in a ref
     const routeJson = ref(routeJsonData);
+
+    // NEW: State to track the currently selected leg index
+    const selectedLegIndex = ref(0); // Default to the first leg
 
     const messages = ref([
       {
@@ -42,6 +58,11 @@ export default {
         sender: "bot",
       },
     ]);
+
+    // NEW: Function to update the selected leg index
+    const selectLeg = (index) => {
+      selectedLegIndex.value = index;
+    };
 
     const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
     const mistralApiUrl = "https://api.mistral.ai/v1/chat/completions";
@@ -101,11 +122,16 @@ export default {
     return {
       messages,
       handleNewMessage,
-      routeJson, // 5. Expose the data to the template
+      routeJson,
+      selectedLegIndex, // Expose to the template
+      selectLeg, // Expose to the template
     };
   },
 };
 </script>
+// src/views/ChatView.vue -> replace the
+<style>
+section with this
 
 <style scoped>
 /* --- Versailles Color Palette --- */
@@ -117,29 +143,33 @@ export default {
   --border-light: #e0d8c5;
 }
 
-/* New styles for the two-column layout */
+/* MODIFIED: Reverted to the original side-by-side layout */
 .main-layout-container {
   display: flex;
+  /* flex-direction: row; is the default, so this line isn't strictly needed */
   height: 100vh;
   width: 100vw;
   background-color: var(--background-main);
 }
 
+/* MODIFIED: Map area now contains map + buttons, stacked vertically */
 .map-area {
-  flex: 1; /* The map will take 1 part of the available space */
+  flex: 1; /* The map area will take 1 part of the available space */
   height: 100vh;
+  display: flex;
+  flex-direction: column; /* Stacks the map on top of the button selector */
 }
 
-/* Modified styles for the chat container */
+/* MODIFIED: Reverted to its original state for the side-by-side layout */
 #chat-container {
-  flex: 1; /* The chat will take 1 part of the space. Change to flex: 2; to make it wider */
+  flex: 1; /* The chat will take 1 part of the space. */
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-width: 800px; /* You might want to adjust or remove this */
-  margin: 0; /* Remove auto margin */
+  max-width: 800px;
+  margin: 0;
   background-color: var(--background-main);
-  border-right: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light); /* Back to border-right */
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
@@ -165,5 +195,41 @@ export default {
   font-style: italic;
   font-family: "Source Serif Pro", serif;
   opacity: 0.7;
+}
+
+/* Styles for the leg selector buttons (no changes needed here) */
+.leg-selector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: #fff;
+  border-top: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+
+.leg-selector button {
+  font-family: "Source Serif Pro", serif;
+  font-size: 1rem;
+  font-weight: bold;
+  margin: 0 5px;
+  padding: 8px 15px;
+  border: 1px solid var(--border-light);
+  border-radius: 5px;
+  background-color: #f8f5ed;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.leg-selector button:hover {
+  background-color: var(--color-gold);
+  color: white;
+}
+
+.leg-selector button.active {
+  background-color: var(--color-gold);
+  color: white;
+  border-color: var(--color-gold);
 }
 </style>
