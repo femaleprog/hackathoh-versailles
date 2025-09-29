@@ -5,8 +5,7 @@ import logging
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from typing import Literal
-from langfuse import observe
-from langfuse import Langfuse
+from langfuse import Langfuse, observe
 
 from dotenv import load_dotenv
 
@@ -27,7 +26,7 @@ class SearchPlaceToolParams(BaseModel):
     )
 
 
-@observe
+@observe(name="search_places_in_versailles")
 def search_places_in_versailles(
     query: str,
     fields: list[PlaceField] = [
@@ -92,7 +91,7 @@ class RouteToolParams(BaseModel):
     )
 
 
-@observe
+@observe(name="get_best_route_between_places")
 def get_best_route_between_places(places: list[str]):
     """
     Calculate the optimal walking route between multiple places using Google Routes API.
@@ -171,7 +170,7 @@ def get_best_route_between_places(places: list[str]):
     return json_response
 
 
-@observe
+@observe(name="get_weather_in_versailles")
 def get_weather_in_versailles(n_days: int):
 
     # Google Weather API endpoint for Versailles

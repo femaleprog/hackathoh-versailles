@@ -35,7 +35,7 @@ langfuse = get_langfuse()
 # callback_manager = CallbackManager([langfuse_callback_handler])
 
 
-@observe()
+@observe(name="sum_numbers")
 def sum_numbers(a: int, b: int) -> int:
     """Additionne deux nombres entiers."""
     return a + b
@@ -46,8 +46,9 @@ class Agent:
     Un agent encapsulant un FunctionAgent de LlamaIndex avec un LLM Mistral.
     """
 
-    def __init__(self):
+    def __init__(self, session_id: str = None):
         """Initialise l'agent, le LLM et les outils."""
+        self.session_id = session_id or str(uuid.uuid4())
 
         load_dotenv()
 
@@ -132,7 +133,20 @@ class Agent:
         }
         return response
 
+    @observe(name="chat_completion_stream")
     async def _internal_streamer(self, query) -> AsyncGenerator[str, None]:
+        """Internal streaming handler with Langfuse tracing."""
+        # Add session context to the observation
+        langfuse.update_current_trace(
+            session_id=self.session_id,
+            tags=[f"session:{self.session_id}", "stream"],
+            metadata={
+                "agent_session": self.session_id,
+                "request_type": "stream",
+                "timestamp": datetime.now().isoformat(),
+            },
+        )
+
         try:
             handler = self.agent.run(query)
 
@@ -142,6 +156,7 @@ class Agent:
         except Exception as e:
             raise e
 
+    @observe(name="chat_completion_non_stream")
     async def chat_completion_non_stream(self, query: str) -> str:
         """Traite une requête en mode non-stream."""
 
