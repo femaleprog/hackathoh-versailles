@@ -17,3 +17,13 @@ class ChatCompletionRequest(BaseModel):
 
     class Config:
         extra = "allow"
+
+
+# --- Evaluation ---
+class EvalCompletionRequest(BaseModel):
+    model: str = "mistral-medium-2508"
+    question: str
+
+
+class EvalCompletionAnswer(BaseModel):
+    answer: str
