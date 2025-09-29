@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "google-api-python-client>=2.183.0",
     "fastapi>=0.118.0",
     "llama-index>=0.14.3",
     "llama-index-embeddings-huggingface>=0.6.1",
