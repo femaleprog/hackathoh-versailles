@@ -1,5 +1,3 @@
-# Fichier API (CORRIGÉ)
-
 import json
 import os
 import time
@@ -15,25 +13,26 @@ from app.schema import (
     EvalCompletionAnswer,
     EvalCompletionRequest,
 )
-from src.agent import Agent  # Assurez-vous que le chemin est correct
+from src.agent import Agent
+from src.prompts import load_prompts
 
 load_dotenv()
 
-# CORRECTION : Définir la clé API globalement pour la route /evaluate
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
+SYSTEM_PROMPTS = load_prompts(
+    filenames=["src/prompt_files/chat.txt", "src/prompt_files/eval.txt"]
+)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.agent = Agent()
 
-    # CORRECTION : Initialiser le client httpx pour la route /evaluate
     app.state.httpx_client = httpx.AsyncClient(base_url="https://api.mistral.ai")
 
     print("Agent et client HTTP sont prêts !")
     yield
 
-    # CORRECTION : Fermer le client proprement
     await app.state.httpx_client.aclose()
     print("Arrêt de l'agent et du client.")
 
@@ -52,6 +51,7 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
     Proxy pour l'agent LlamaIndex
     """
     agent: Agent = request.app.state.agent
+    agent.system_prompt = SYSTEM_PROMPTS["chat"]
 
     try:
         query = payload.messages[-1].content
@@ -60,12 +60,12 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
         raise HTTPException(status_code=400, detail="Payload de messages invalide.")
 
     try:
-        if payload.stream:
+        if payload.stream:  # STREAMING HANDLING
             final_generator = agent.chat_completion_stream(query=query)
 
             return StreamingResponse(final_generator, media_type="text/event-stream")
 
-        else:
+        else:  # NON STREAM HANDLING
             response = await agent.chat_completion_non_stream(query=query)
             print(response)
             response_content = response["choices"][0]["message"]["content"]
@@ -99,61 +99,21 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
 
 
 @app.post("/v1/evaluate")
-async def quantitative_eval_route(request: EvalCompletionRequest):
+async def quantitative_eval_route(payload: EvalCompletionRequest, request: Request):
     """
     Proxy direct vers l'API Mistral (contourne l'agent)
     """
-    client: httpx.AsyncClient = app.state.httpx_client
 
-    # CORRECTION : Utiliser la variable MISTRAL_API_KEY globale
-    if not MISTRAL_API_KEY:
-        raise HTTPException(
-            status_code=500, detail="MISTRAL_API_KEY non configurée côté serveur."
-        )
-
-    headers = {
-        "Authorization": f"Bearer {MISTRAL_API_KEY}",
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-    }
-
-    payload = request.dict(exclude_none=True)
+    agent: Agent = request.app.state.agent
+    agent.system_prompt = SYSTEM_PROMPTS["eval"]
+    query = payload.question
 
     try:
-        # Le client a déjà la base_url "https://api.mistral.ai"
-        response = await client.post(
-            "/v1/chat/completions", headers=headers, json=payload, timeout=300
-        )
-
-        if response.status_code != 200:
-            raise HTTPException(
-                status_code=response.status_code, detail=response.json()
-            )
-
-        try:
-            data = response.json()
-            answer = data["choices"][0]["message"]["content"]
-        except (KeyError, IndexError, TypeError):
-            raise HTTPException(
-                status_code=500,
-                detail="Format de réponse inattendu depuis l'API Mistral",
-            )
+        response = await agent.chat_completion_non_stream(query=query)
+        answer = response["choices"][0]["message"]["content"]
 
         return EvalCompletionAnswer(answer=answer)
 
-    except httpx.ReadTimeout:
-        raise HTTPException(
-            status_code=504,
-            detail="Gateway Timeout: La requête vers l'API Mistral a expiré.",
-        )
-    except httpx.ConnectError:
-        raise HTTPException(
-            status_code=502,
-            detail="Bad Gateway: Impossible de se connecter à l'API Mistral.",
-        )
-    except HTTPException as e:
-        # Re-lever les exceptions HTTP déjà formatées
-        raise e
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Erreur interne du proxy: {str(e)}"
