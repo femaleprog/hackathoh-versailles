@@ -62,14 +62,15 @@ class Agent:
             FunctionTool.from_defaults(
                 fn=scrape_versailles_schedule,
                 name="get_versailles_schedule",
-                description="Retrieves the opening hours and schedule for the Palace of Versailles and its estate for a specific date. The input must be a date string in 'YYYY-MM-DD' format.",
+                description="Retrieves the opening hours, visitor numbers and schedule for the Palace of Versailles and its estate for a specific date. The input must be a date string in 'YYYY-MM-DD' format.",
             ),
         ]
 
+        today_date = datetime.now().strftime("%Y-%m-%d")
         self.agent = FunctionAgent(
             llm=self.llm,
             tools=self.tools,
-            system_prompt="",
+            system_prompt=f"Today's date is {today_date}.",
             verbose=True,
         )
 
