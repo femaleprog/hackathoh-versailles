@@ -1,0 +1,120 @@
+import json
+import os
+import time
+from contextlib import asynccontextmanager
+
+import httpx
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse, StreamingResponse
+
+from app.schema import (
+    ChatCompletionRequest,
+    EvalCompletionAnswer,
+    EvalCompletionRequest,
+)
+from src.agent import Agent
+from src.prompts import load_prompts
+
+load_dotenv()
+
+MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
+SYSTEM_PROMPTS = load_prompts(
+    filenames=["src/prompt_files/chat.txt", "src/prompt_files/eval.txt"]
+)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    app.state.agent = Agent()
+
+    app.state.httpx_client = httpx.AsyncClient(base_url="https://api.mistral.ai")
+
+    print("Agent et client HTTP sont prêts !")
+    yield
+
+    await app.state.httpx_client.aclose()
+    print("Arrêt de l'agent et du client.")
+
+
+app = FastAPI(title="Proxy Mistral API (OpenAI-like)", lifespan=lifespan)
+
+
+@app.get("/")
+def root():
+    return "Versailles Chatbot"
+
+
+@app.post("/v1/chat/completions")
+async def proxy_chat_completions(payload: ChatCompletionRequest, request: Request):
+    """
+    Proxy pour l'agent LlamaIndex
+    """
+    agent: Agent = request.app.state.agent
+    agent.agent.system_prompt = SYSTEM_PROMPTS["chat"]
+
+    try:
+        query = payload.messages[-1].content
+        print(query)
+    except (AttributeError, IndexError, TypeError):
+        raise HTTPException(status_code=400, detail="Payload de messages invalide.")
+
+    try:
+        if payload.stream:  # STREAMING HANDLING
+            final_generator = agent.chat_completion_stream(query=query)
+
+            return StreamingResponse(final_generator, media_type="text/event-stream")
+
+        else:  # NON STREAM HANDLING
+            response = await agent.chat_completion_non_stream(query=query)
+            print(response)
+            response_content = response["choices"][0]["message"]["content"]
+            final_response = {
+                "id": f"cmpl-{int(time.time())}",
+                "object": "chat.completion",
+                "created": int(time.time()),
+                "model": "mistral-large-agent",
+                "choices": [
+                    {
+                        "index": 0,
+                        "message": {
+                            "role": "assistant",
+                            "content": response_content,
+                        },
+                        "finish_reason": "stop",
+                    }
+                ],
+                "usage": {
+                    "prompt_tokens": 0,
+                    "completion_tokens": 0,
+                    "total_tokens": 0,
+                },  # Usage non suivi ici
+            }
+            return JSONResponse(content=final_response, status_code=200)
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Erreur interne du proxy: {str(e)}"
+        )
+
+
+@app.post("/v1/evaluate")
+async def quantitative_eval_route(payload: EvalCompletionRequest, request: Request):
+    """
+    Proxy direct vers l'API Mistral (contourne l'agent)
+    """
+
+    agent: Agent = request.app.state.agent
+    agent.agent.system_prompt = SYSTEM_PROMPTS["eval"]
+    query = payload.question
+
+    try:
+        response = await agent.chat_completion_non_stream(query=query)
+        answer = response["choices"][0]["message"]["content"]
+
+        return EvalCompletionAnswer(answer=answer)
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Erreur interne du proxy: {str(e)}"
+        )
