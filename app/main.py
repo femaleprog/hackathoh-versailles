@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 
 import httpx
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 
@@ -38,6 +39,21 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Proxy Mistral API (OpenAI-like)", lifespan=lifespan)
+
+
+origins = [
+    "http://localhost:5173",  # Default Vue dev server port
+    "http://127.0.0.1:5173",
+    # Add any other origins you need
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Allows specific origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods (GET, POST, OPTIONS, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
 
 
 @app.get("/")
