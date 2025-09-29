@@ -16,6 +16,12 @@ from llama_index.core.agent.workflow import (
 from llama_index.core.tools import FunctionTool
 from llama_index.llms.mistralai import MistralAI
 
+# Import RAG tools
+from src.tools.rag import (
+    versailles_context_tool,
+    versailles_expert_tool
+)
+
 
 def sum_numbers(a: int, b: int) -> int:
     """Additionne deux nombres entiers."""
@@ -43,6 +49,16 @@ class Agent:
                 fn=sum_numbers,
                 # name="sum_numbers",
                 description="Allows the LLM to sum up two numbers",
+            ),
+            FunctionTool.from_defaults(
+                fn=versailles_expert_tool,
+                name="versailles_expert",
+                description="Ask questions about the Palace of Versailles. Provides comprehensive expert answers with historical, architectural, and cultural information about Versailles, its history, gardens, and notable figures like Louis XIV and Marie Antoinette.",
+            ),
+            FunctionTool.from_defaults(
+                fn=versailles_context_tool,
+                name="versailles_context",
+                description="Get raw contextual information from Versailles knowledge base. Returns relevant document excerpts for complex analysis or when you need to combine Versailles information with other data.",
             ),
         ]
 
