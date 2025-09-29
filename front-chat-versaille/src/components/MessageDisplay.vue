@@ -6,15 +6,15 @@
       class="message-wrapper"
       :class="message.sender"
     >
-      <div class="message-bubble">
-        <p>{{ message.text }}</p>
-      </div>
+      <div class="message-bubble" v-html="renderMarkdown(message.text)"></div>
     </div>
   </div>
 </template>
 
 <script>
 import { nextTick, ref, watch } from "vue";
+import { marked } from "marked"; // Import the marked library
+import DOMPurify from "dompurify"; // Import DOMPurify for security
 
 export default {
   name: "MessageDisplay",
@@ -27,7 +27,6 @@ export default {
   setup(props) {
     const messageArea = ref(null);
 
-    // Auto-scroll to the bottom when new messages are added
     watch(
       () => props.messages.length,
       async () => {
@@ -38,13 +37,18 @@ export default {
       }
     );
 
-    return { messageArea };
+    const renderMarkdown = (text) => {
+      const rawHtml = marked.parse(text);
+      const sanitizedHtml = DOMPurify.sanitize(rawHtml);
+      return sanitizedHtml;
+    };
+
+    return { messageArea, renderMarkdown };
   },
 };
 </script>
 
 <style scoped>
-/* Inherit colors from ChatView */
 :root {
   --text-primary: #3a3a3a;
   --border-light: #e0d8c5;
@@ -61,7 +65,7 @@ export default {
 
 .message-wrapper {
   display: flex;
-  max-width: 80%; /* Modern chat UIs use a wider bubble */
+  max-width: 80%;
 }
 
 .message-wrapper.user {
@@ -76,25 +80,34 @@ export default {
 
 .message-bubble {
   padding: 12px 18px;
-  border-radius: 12px; /* Softer, more modern radius */
+  border-radius: 12px;
   font-family: "Source Serif Pro", serif;
   line-height: 1.6;
   font-size: 1rem;
 }
 
-/* Modern, clean look inspired by ChatGPT/Mistral */
 .user .message-bubble {
-  background-color: #e9e9eb; /* Neutral grey for user */
+  background-color: #e9e9eb;
   color: #000;
 }
 
 .bot .message-bubble {
-  background-color: #ffffff; /* Clean white for bot */
+  background-color: #ffffff;
   color: var(--text-primary);
   border: 1px solid var(--border-light);
 }
 
-.message-bubble p {
-  margin: 0;
+.message-bubble :deep(p) {
+  margin: 0 0 0.5em 0;
+}
+.message-bubble :deep(p:last-child) {
+  margin-bottom: 0;
+}
+
+.message-bubble :deep(ul),
+.message-bubble :deep(ol) {
+  padding-left: 20px;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }
 </style>

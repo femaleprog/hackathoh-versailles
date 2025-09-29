@@ -47,9 +47,7 @@ export default {
   },
   setup() {
     const routeJson = ref(routeJsonData);
-
-    // NEW: State to track the currently selected leg index
-    const selectedLegIndex = ref(0); // Default to the first leg
+    const selectedLegIndex = ref(0);
 
     const messages = ref([
       {
@@ -59,7 +57,6 @@ export default {
       },
     ]);
 
-    // NEW: Function to update the selected leg index
     const selectLeg = (index) => {
       selectedLegIndex.value = index;
     };
@@ -68,6 +65,7 @@ export default {
     const mistralApiUrl = "https://api.mistral.ai/v1/chat/completions";
 
     const handleNewMessage = async (newMessageText) => {
+      // 1. Add user message to the UI
       messages.value.push({
         id: Date.now(),
         text: newMessageText,
@@ -83,6 +81,12 @@ export default {
         return;
       }
 
+      // 2. Prepare the full conversation history for the API
+      const apiMessages = messages.value.map((msg) => ({
+        role: msg.sender === "bot" ? "assistant" : "user",
+        content: msg.text,
+      }));
+
       try {
         const response = await fetch(mistralApiUrl, {
           method: "POST",
@@ -92,8 +96,9 @@ export default {
             Authorization: `Bearer ${apiKey}`,
           },
           body: JSON.stringify({
-            model: "mistral-large-latest",
-            messages: [{ role: "user", content: newMessageText }],
+            model: "mistral-medium-latest",
+            messages: apiMessages, // Send the entire history
+            stream: true, // Enable streaming
           }),
         });
 
@@ -101,14 +106,53 @@ export default {
           throw new Error(`API request failed with status ${response.status}`);
         }
 
-        const data = await response.json();
-        const botReply = data.choices[0].message.content;
+        // 3. Handle the streaming response
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
 
+        // Add a new, empty bot message to the UI
+        const botMessageId = Date.now() + 1;
         messages.value.push({
-          id: Date.now() + 1,
-          text: botReply,
+          id: botMessageId,
+          text: "",
           sender: "bot",
         });
+
+        // Find the message we just added to append chunks to it
+        const currentBotMessage = messages.value.find(
+          (m) => m.id === botMessageId
+        );
+
+        // Read the stream
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+
+          // The API sends data in SSE (Server-Sent Events) format.
+          // Each message is prefixed with "data: " and ends with "\n\n".
+          const lines = chunk.split("\n\n");
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              const data = line.substring(6);
+              if (data.trim() === "[DONE]") {
+                return; // Stream finished
+              }
+              try {
+                const parsed = JSON.parse(data);
+                const content = parsed.choices[0]?.delta?.content;
+                if (content && currentBotMessage) {
+                  // Append the content chunk to the bot message's text
+                  currentBotMessage.text += content;
+                }
+              } catch (e) {
+                console.error("Could not parse stream chunk:", data, e);
+              }
+            }
+          }
+        }
       } catch (error) {
         console.error("Error calling Mistral API:", error);
         messages.value.push({
@@ -123,15 +167,12 @@ export default {
       messages,
       handleNewMessage,
       routeJson,
-      selectedLegIndex, // Expose to the template
-      selectLeg, // Expose to the template
+      selectedLegIndex,
+      selectLeg,
     };
   },
 };
 </script>
-// src/views/ChatView.vue -> replace the
-<style>
-section with this
 
 <style scoped>
 /* --- Versailles Color Palette --- */

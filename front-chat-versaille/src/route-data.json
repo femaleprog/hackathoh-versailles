@@ -5,160 +5,276 @@
         {
           "steps": [
             {
-              "distanceMeters": 92,
-              "staticDuration": "74s",
-              "polyline": { "encodedPolyline": "sk{hHaj|KwCaB" },
+              "distanceMeters": 80,
+              "staticDuration": "65s",
+              "polyline": { "encodedPolyline": "s}zhHez~KXh@~Ah@" },
               "startLocation": {
-                "latLng": { "latitude": 48.8058597, "longitude": 2.1163347 }
+                "latLng": { "latitude": 48.803619, "longitude": 2.1291525 }
               },
               "endLocation": {
-                "latLng": { "latitude": 48.8066247, "longitude": 2.1168163 }
+                "latLng": { "latitude": 48.8030074, "longitude": 2.1287268 }
               },
               "navigationInstruction": {
                 "maneuver": "DEPART",
-                "instructions": "Prendre la direction nord-est vers All. Royale"
+                "instructions": "Prendre la direction sud-ouest vers Av. de Paris"
               },
               "localizedValues": {
-                "distance": { "text": "92 m" },
+                "distance": { "text": "80 m" },
                 "staticDuration": { "text": "1 minute" }
               },
               "travelMode": "WALK"
             },
             {
-              "distanceMeters": 9,
-              "staticDuration": "7s",
-              "polyline": { "encodedPolyline": "kp{hHcm|KGT" },
+              "distanceMeters": 165,
+              "staticDuration": "130s",
+              "polyline": { "encodedPolyline": "yyzhHqw~K_@zBBDcApG" },
               "startLocation": {
-                "latLng": { "latitude": 48.8066247, "longitude": 2.1168163 }
+                "latLng": { "latitude": 48.8030074, "longitude": 2.1287268 }
               },
               "endLocation": {
                 "latLng": {
-                  "latitude": 48.806655899999996,
-                  "longitude": 2.1167059999999998
+                  "latitude": 48.80349340000001,
+                  "longitude": 2.126706
                 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche vers All. de l'Et\\u00e9"
-              },
-              "localizedValues": {
-                "distance": { "text": "9 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 84,
-              "staticDuration": "68s",
-              "polyline": { "encodedPolyline": "sp{hHml|KiCuA" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.806655899999996,
-                  "longitude": 2.1167059999999998
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.807353, "longitude": 2.11714 }
               },
               "navigationInstruction": {
                 "maneuver": "TURN_RIGHT",
-                "instructions": "Prendre \\u00e0 droite sur All. de l'Et\\u00e9"
-              },
-              "localizedValues": {
-                "distance": { "text": "84 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 28,
-              "staticDuration": "21s",
-              "polyline": { "encodedPolyline": "}t{hHco|Km@^" },
-              "startLocation": {
-                "latLng": { "latitude": 48.807353, "longitude": 2.11714 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.807581,
-                  "longitude": 2.1169819999999997
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur All. de l'Et\\u00e9/All. des Pr\\u00e9s"
-              },
-              "localizedValues": {
-                "distance": { "text": "28 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 26,
-              "staticDuration": "21s",
-              "polyline": { "encodedPolyline": "kv{hHcn|KQaA" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.807581,
-                  "longitude": 2.1169819999999997
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.807669, "longitude": 2.1173129 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Prendre \\u00e0 droite sur All. de C\\u00e9r\\u00e8s et de Flore/All. des Pr\\u00e9s"
-              },
-              "localizedValues": {
-                "distance": { "text": "26 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 223,
-              "staticDuration": "164s",
-              "polyline": { "encodedPolyline": "}v{hHep|KsJeF" },
-              "startLocation": {
-                "latLng": { "latitude": 48.807669, "longitude": 2.1173129 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.809528,
-                  "longitude": 2.1184621999999997
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur All. de l'Et\\u00e9"
+                "instructions": "Prendre \\u00e0 droite sur Av. de Paris"
               },
               "localizedValues": {
                 "distance": { "text": "0,2 km" },
-                "staticDuration": { "text": "3 minutes" }
+                "staticDuration": { "text": "2 minutes" }
               },
               "travelMode": "WALK"
             },
             {
-              "distanceMeters": 597,
-              "staticDuration": "458s",
-              "polyline": { "encodedPolyline": "qb|hHkw|KiCvJSP{J`_@" },
+              "distanceMeters": 34,
+              "staticDuration": "41s",
+              "polyline": { "encodedPolyline": "y|zhH}j~KTJG`@^N" },
               "startLocation": {
                 "latLng": {
-                  "latitude": 48.809528,
-                  "longitude": 2.1184621999999997
+                  "latitude": 48.80349340000001,
+                  "longitude": 2.126706
+                }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.8032592, "longitude": 2.1263961 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "Prendre \\u00e0 gauche sur Av. Rockefeller/D186"
+              },
+              "localizedValues": {
+                "distance": { "text": "34 m" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 63,
+              "staticDuration": "53s",
+              "polyline": { "encodedPolyline": "k{zhH_i~Kc@pA?XRN" },
+              "startLocation": {
+                "latLng": { "latitude": 48.8032592, "longitude": 2.1263961 }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 48.80333950000001,
+                  "longitude": 2.1257802999999997
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Tourner \\u00e0 droite"
+              },
+              "localizedValues": {
+                "distance": { "text": "63 m" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 237,
+              "staticDuration": "217s",
+              "polyline": { "encodedPolyline": "{{zhHce~KaDtQ" },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 48.80333950000001,
+                  "longitude": 2.1257802999999997
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 48.804154499999996,
+                  "longitude": 2.1227850000000004
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Tourner \\u00e0 droite"
+              },
+              "localizedValues": {
+                "distance": { "text": "0,2 km" },
+                "staticDuration": { "text": "4 minutes" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 168,
+              "staticDuration": "139s",
+              "polyline": {
+                "encodedPolyline": "}`{hHmr}KPNLPHTJr@@\\\\Ar@El@[tB?VN\\\\"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 48.804154499999996,
+                  "longitude": 2.1227850000000004
+                }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.8039731, "longitude": 2.1207523 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "Tourner \\u00e0 gauche"
+              },
+              "localizedValues": {
+                "distance": { "text": "0,2 km" },
+                "staticDuration": { "text": "2 minutes" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 85,
+              "staticDuration": "68s",
+              "polyline": { "encodedPolyline": "y_{hHue}Ku@xE" },
+              "startLocation": {
+                "latLng": { "latitude": 48.8039731, "longitude": 2.1207523 }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.8042446, "longitude": 2.1196626 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Tourner \\u00e0 droite"
+              },
+              "localizedValues": {
+                "distance": { "text": "85 m" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 143,
+              "staticDuration": "113s",
+              "polyline": { "encodedPolyline": "oa{hH{~|Kc@HmEyB" },
+              "startLocation": {
+                "latLng": { "latitude": 48.8042446, "longitude": 2.1196626 }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.8054493, "longitude": 2.1202182 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Tourner \\u00e0 droite vers Av. du S"
+              },
+              "localizedValues": {
+                "distance": { "text": "0,1 km" },
+                "staticDuration": { "text": "2 minutes" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 76,
+              "staticDuration": "60s",
+              "polyline": { "encodedPolyline": "ai{hHkb}Ko@bE" },
+              "startLocation": {
+                "latLng": { "latitude": 48.8054493, "longitude": 2.1202182 }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 48.805690399999996,
+                  "longitude": 2.1192412
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "Prendre \\u00e0 gauche sur Av. du S"
+              },
+              "localizedValues": {
+                "distance": { "text": "76 m" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 134,
+              "staticDuration": "95s",
+              "polyline": { "encodedPolyline": "qj{hHg||K_FeC" },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 48.805690399999996,
+                  "longitude": 2.1192412
+                }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.8068085, "longitude": 2.1199076 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Tourner \\u00e0 droite vers Av. du N"
+              },
+              "localizedValues": {
+                "distance": { "text": "0,1 km" },
+                "staticDuration": { "text": "2 minutes" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 18,
+              "staticDuration": "13s",
+              "polyline": { "encodedPolyline": "qq{hHm`}KKl@" },
+              "startLocation": {
+                "latLng": { "latitude": 48.8068085, "longitude": 2.1199076 }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 48.8068692,
+                  "longitude": 2.1196753999999998
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "Prendre \\u00e0 gauche sur Av. du N"
+              },
+              "localizedValues": {
+                "distance": { "text": "18 m" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 1001,
+              "staticDuration": "760s",
+              "polyline": {
+                "encodedPolyline": "}q{hH__}KeEwBkCkAWEKLEPKLQ`@}BzIA`@cCfJSP{J`_@"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 48.8068692,
+                  "longitude": 2.1196753999999998
                 }
               },
               "endLocation": {
                 "latLng": { "latitude": 48.8122171, "longitude": 2.1113646 }
               },
               "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur Av. de Trianon"
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Prendre \\u00e0 droite sur Av. de Trianon\\nRoute \\u00e0 p\\u00e9age"
               },
               "localizedValues": {
-                "distance": { "text": "0,6 km" },
-                "staticDuration": { "text": "8 minutes" }
+                "distance": { "text": "1,0 km" },
+                "staticDuration": { "text": "13 minutes" }
               },
               "travelMode": "WALK"
             },
@@ -212,9 +328,9 @@
               "travelMode": "WALK"
             },
             {
-              "distanceMeters": 110,
-              "staticDuration": "96s",
-              "polyline": { "encodedPolyline": "ud}hHmd{Kc@LW@kBn@QD" },
+              "distanceMeters": 37,
+              "staticDuration": "31s",
+              "polyline": { "encodedPolyline": "ud}hHmd{Kc@LW@" },
               "startLocation": {
                 "latLng": {
                   "latitude": 48.814994899999995,
@@ -222,44 +338,156 @@
                 }
               },
               "endLocation": {
-                "latLng": { "latitude": 48.8159213, "longitude": 2.1099577 }
+                "latLng": {
+                  "latitude": 48.815288699999996,
+                  "longitude": 2.1102336
+                }
               },
               "navigationInstruction": {
                 "maneuver": "TURN_LEFT",
                 "instructions": "Tourner \\u00e0 gauche"
               },
               "localizedValues": {
-                "distance": { "text": "0,1 km" },
-                "staticDuration": { "text": "2 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 16,
-              "staticDuration": "14s",
-              "polyline": { "encodedPolyline": "oj}hHgb{KDh@" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8159213, "longitude": 2.1099577 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8158928, "longitude": 2.1097476 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche"
-              },
-              "localizedValues": {
-                "distance": { "text": "16 m" },
+                "distance": { "text": "37 m" },
                 "staticDuration": { "text": "1 minute" }
               },
               "travelMode": "WALK"
             },
             {
-              "distanceMeters": 33,
-              "staticDuration": "28s",
-              "polyline": { "encodedPolyline": "ij}hH}`{KD@FF@HJEFb@" },
+              "distanceMeters": 158,
+              "staticDuration": "123s",
+              "polyline": {
+                "encodedPolyline": "qf}hH}c{KKcAOs@Uc@Cy@Q]EWOiBCQ"
+              },
               "startLocation": {
-                "latLng": { "latitude": 48.8158928, "longitude": 2.1097476 }
+                "latLng": {
+                  "latitude": 48.815288699999996,
+                  "longitude": 2.1102336
+                }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.815781, "longitude": 2.1121879 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Tourner \\u00e0 droite"
+              },
+              "localizedValues": {
+                "distance": { "text": "0,2 km" },
+                "staticDuration": { "text": "2 minutes" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 253,
+              "staticDuration": "201s",
+              "polyline": {
+                "encodedPolyline": "si}hHep{KIg@EE_@KYKSA_A[[m@c@IMQm@c@QE_@S{@SGC"
+              },
+              "startLocation": {
+                "latLng": { "latitude": 48.815781, "longitude": 2.1121879 }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.817781, "longitude": 2.1134939 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_SLIGHT_LEFT",
+                "instructions": "Tourner l\\u00e9g\\u00e8rement \\u00e0 gauche"
+              },
+              "localizedValues": {
+                "distance": { "text": "0,3 km" },
+                "staticDuration": { "text": "3 minutes" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 174,
+              "staticDuration": "147s",
+              "polyline": {
+                "encodedPolyline": "cv}hHix{KsAT]Zk@Bi@EYC_@EOHWX"
+              },
+              "startLocation": {
+                "latLng": { "latitude": 48.817781, "longitude": 2.1134939 }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 48.819271799999996,
+                  "longitude": 2.1131192
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_SLIGHT_LEFT",
+                "instructions": "Tourner l\\u00e9g\\u00e8rement \\u00e0 gauche\\nVotre destination se trouvera sur la gauche."
+              },
+              "localizedValues": {
+                "distance": { "text": "0,2 km" },
+                "staticDuration": { "text": "2 minutes" }
+              },
+              "travelMode": "WALK"
+            }
+          ],
+          "startPlaceDetails": "La Grande \\u00c9curie",
+          "endPlaceDetails": "Le hameau de la Reine"
+        },
+        {
+          "steps": [
+            {
+              "distanceMeters": 107,
+              "staticDuration": "83s",
+              "polyline": { "encodedPolyline": "m_~hH_v{K`@a@LA`@Hl@@JBj@C" },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 48.819271799999996,
+                  "longitude": 2.1131192
+                }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.8183526, "longitude": 2.1132366 }
+              },
+              "navigationInstruction": {
+                "maneuver": "DEPART",
+                "instructions": "Prendre la direction sud-est"
+              },
+              "localizedValues": {
+                "distance": { "text": "0,1 km" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 26,
+              "staticDuration": "21s",
+              "polyline": { "encodedPolyline": "uy}hHwv{KLt@?L" },
+              "startLocation": {
+                "latLng": { "latitude": 48.8183526, "longitude": 2.1132366 }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 48.8182784,
+                  "longitude": 2.1128991999999998
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Tourner \\u00e0 droite"
+              },
+              "localizedValues": {
+                "distance": { "text": "26 m" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 444,
+              "staticDuration": "365s",
+              "polyline": {
+                "encodedPolyline": "gy}hHst{KNTXUJK\\\\Mj@FLNJ\\\\NL@^FTb@z@Pd@RXNl@jAh@R\\\\VfAB|AFr@Zt@f@RL@FF@HJEFb@"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 48.8182784,
+                  "longitude": 2.1128991999999998
+                }
               },
               "endLocation": {
                 "latLng": {
@@ -272,8 +500,8 @@
                 "instructions": "Tourner \\u00e0 gauche\\nPrendre les escaliers"
               },
               "localizedValues": {
-                "distance": { "text": "33 m" },
-                "staticDuration": { "text": "1 minute" }
+                "distance": { "text": "0,4 km" },
+                "staticDuration": { "text": "6 minutes" }
               },
               "travelMode": "WALK"
             },
@@ -303,7 +531,9 @@
               },
               "travelMode": "WALK"
             }
-          ]
+          ],
+          "startPlaceDetails": "Le hameau de la Reine",
+          "endPlaceDetails": "Le Petit Trianon"
         },
         {
           "steps": [
@@ -640,9 +870,9 @@
               "travelMode": "WALK"
             },
             {
-              "distanceMeters": 237,
-              "staticDuration": "169s",
-              "polyline": { "encodedPolyline": "}`{hHmr}K`DuQ" },
+              "distanceMeters": 138,
+              "staticDuration": "95s",
+              "polyline": { "encodedPolyline": "}`{hHmr}KzA{I" },
               "startLocation": {
                 "latLng": {
                   "latitude": 48.804154499999996,
@@ -650,178 +880,11 @@
                 }
               },
               "endLocation": {
-                "latLng": {
-                  "latitude": 48.80333950000001,
-                  "longitude": 2.1257802999999997
-                }
+                "latLng": { "latitude": 48.803687, "longitude": 2.1245287 }
               },
               "navigationInstruction": {
                 "maneuver": "TURN_RIGHT",
                 "instructions": "Tourner \\u00e0 droite"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,2 km" },
-                "staticDuration": { "text": "3 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 63,
-              "staticDuration": "49s",
-              "polyline": { "encodedPolyline": "{{zhHce~KSO?Yb@qA" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.80333950000001,
-                  "longitude": 2.1257802999999997
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8032592, "longitude": 2.1263961 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche vers Av. Rockefeller/D186"
-              },
-              "localizedValues": {
-                "distance": { "text": "63 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 34,
-              "staticDuration": "38s",
-              "polyline": { "encodedPolyline": "k{zhH_i~K_@OFa@UK" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8032592, "longitude": 2.1263961 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.80349340000001,
-                  "longitude": 2.126706
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur Av. Rockefeller/D186"
-              },
-              "localizedValues": {
-                "distance": { "text": "34 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 165,
-              "staticDuration": "135s",
-              "polyline": { "encodedPolyline": "y|zhH}j~KbAqGCE^{B" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.80349340000001,
-                  "longitude": 2.126706
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8030074, "longitude": 2.1287268 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Prendre \\u00e0 droite sur Av. de Paris"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,2 km" },
-                "staticDuration": { "text": "2 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 80,
-              "staticDuration": "65s",
-              "polyline": { "encodedPolyline": "yyzhHqw~K_Bi@Yi@" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8030074, "longitude": 2.1287268 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.803619, "longitude": 2.1291525 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche\\nVotre destination se trouvera sur la gauche."
-              },
-              "localizedValues": {
-                "distance": { "text": "80 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            }
-          ]
-        },
-        {
-          "steps": [
-            {
-              "distanceMeters": 80,
-              "staticDuration": "65s",
-              "polyline": { "encodedPolyline": "s}zhHez~KXh@~Ah@" },
-              "startLocation": {
-                "latLng": { "latitude": 48.803619, "longitude": 2.1291525 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8030074, "longitude": 2.1287268 }
-              },
-              "navigationInstruction": {
-                "maneuver": "DEPART",
-                "instructions": "Prendre la direction sud-ouest vers Av. de Paris"
-              },
-              "localizedValues": {
-                "distance": { "text": "80 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 165,
-              "staticDuration": "130s",
-              "polyline": { "encodedPolyline": "yyzhHqw~K_@zBBDcApG" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8030074, "longitude": 2.1287268 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.80349340000001,
-                  "longitude": 2.126706
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Prendre \\u00e0 droite sur Av. de Paris"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,2 km" },
-                "staticDuration": { "text": "2 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 128,
-              "staticDuration": "123s",
-              "polyline": {
-                "encodedPolyline": "y|zhH}j~KTJG`@bAh@Fa@^R`@Lh@^PP"
-              },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.80349340000001,
-                  "longitude": 2.126706
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.80241040000001,
-                  "longitude": 2.1260171
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur Av. Rockefeller/D186\\nContinuer de suivre Av. Rockefeller"
               },
               "localizedValues": {
                 "distance": { "text": "0,1 km" },
@@ -830,14 +893,223 @@
               "travelMode": "WALK"
             },
             {
-              "distanceMeters": 30,
-              "staticDuration": "24s",
-              "polyline": { "encodedPolyline": "avzhHsf~KVk@" },
+              "distanceMeters": 31,
+              "staticDuration": "25s",
+              "polyline": { "encodedPolyline": "a~zhHi}}K\\\\FXG" },
+              "startLocation": {
+                "latLng": { "latitude": 48.803687, "longitude": 2.1245287 }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.8034108, "longitude": 2.1245265 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Tourner \\u00e0 droite vers Av. Nepveu S"
+              },
+              "localizedValues": {
+                "distance": { "text": "31 m" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 92,
+              "staticDuration": "74s",
+              "polyline": { "encodedPolyline": "i|zhHi}}KT|CDPC\\\\Df@" },
+              "startLocation": {
+                "latLng": { "latitude": 48.8034108, "longitude": 2.1245265 }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 48.8032624,
+                  "longitude": 2.1233033999999997
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Prendre \\u00e0 droite sur Av. Nepveu S"
+              },
+              "localizedValues": {
+                "distance": { "text": "92 m" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 265,
+              "staticDuration": "201s",
+              "polyline": { "encodedPolyline": "k{zhHsu}KLKrHaJj@u@FQLQ" },
               "startLocation": {
                 "latLng": {
-                  "latitude": 48.80241040000001,
-                  "longitude": 2.1260171
+                  "latitude": 48.8032624,
+                  "longitude": 2.1233033999999997
                 }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.8013182, "longitude": 2.1255764 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "Tourner \\u00e0 gauche"
+              },
+              "localizedValues": {
+                "distance": { "text": "0,3 km" },
+                "staticDuration": { "text": "3 minutes" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 124,
+              "staticDuration": "102s",
+              "polyline": { "encodedPolyline": "gozhH{c~KHTCr@?n@IrE" },
+              "startLocation": {
+                "latLng": { "latitude": 48.8013182, "longitude": 2.1255764 }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.8013409, "longitude": 2.1239057 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Prendre \\u00e0 droite sur Rue de Fontenay"
+              },
+              "localizedValues": {
+                "distance": { "text": "0,1 km" },
+                "staticDuration": { "text": "2 minutes" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 53,
+              "staticDuration": "41s",
+              "polyline": { "encodedPolyline": "kozhHmy}KxAd@" },
+              "startLocation": {
+                "latLng": { "latitude": 48.8013409, "longitude": 2.1239057 }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.800889, "longitude": 2.1237234 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "Prendre \\u00e0 gauche sur Rue du Jeu de Paume\\nVotre destination se trouvera sur la droite."
+              },
+              "localizedValues": {
+                "distance": { "text": "53 m" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            }
+          ],
+          "startPlaceDetails": "Le Petit Trianon",
+          "endPlaceDetails": "La Salle du Jeu de Paume"
+        },
+        {
+          "steps": [
+            {
+              "distanceMeters": 53,
+              "staticDuration": "45s",
+              "polyline": { "encodedPolyline": "qlzhHgx}KyAe@" },
+              "startLocation": {
+                "latLng": { "latitude": 48.800889, "longitude": 2.1237234 }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.8013409, "longitude": 2.1239057 }
+              },
+              "navigationInstruction": {
+                "maneuver": "DEPART",
+                "instructions": "Prendre la direction nord sur Rue du Jeu de Paume vers Rue de Fontenay"
+              },
+              "localizedValues": {
+                "distance": { "text": "53 m" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 144,
+              "staticDuration": "121s",
+              "polyline": { "encodedPolyline": "kozhHmy}KJmF?q@@We@mA" },
+              "startLocation": {
+                "latLng": { "latitude": 48.8013409, "longitude": 2.1239057 }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.8014605, "longitude": 2.1258643 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Prendre \\u00e0 droite sur Rue de Fontenay"
+              },
+              "localizedValues": {
+                "distance": { "text": "0,1 km" },
+                "staticDuration": { "text": "2 minutes" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 44,
+              "staticDuration": "49s",
+              "polyline": { "encodedPolyline": "cpzhHse~K}@nA" },
+              "startLocation": {
+                "latLng": { "latitude": 48.8014605, "longitude": 2.1258643 }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.8017666, "longitude": 2.1254618 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "Prendre \\u00e0 gauche sur Av. de Sceaux"
+              },
+              "localizedValues": {
+                "distance": { "text": "44 m" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 14,
+              "staticDuration": "13s",
+              "polyline": { "encodedPolyline": "arzhHcc~KIVIH" },
+              "startLocation": {
+                "latLng": { "latitude": 48.8017666, "longitude": 2.1254618 }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.8018686, "longitude": 2.1252936 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_SLIGHT_RIGHT",
+                "instructions": "Prendre l\\u00e9g\\u00e8rement \\u00e0 droite sur Av. Nepveu S"
+              },
+              "localizedValues": {
+                "distance": { "text": "14 m" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 84,
+              "staticDuration": "74s",
+              "polyline": { "encodedPolyline": "urzhHab~KWQa@o@C?c@u@MQ" },
+              "startLocation": {
+                "latLng": { "latitude": 48.8018686, "longitude": 2.1252936 }
+              },
+              "endLocation": {
+                "latLng": { "latitude": 48.8024306, "longitude": 2.1259791 }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Prendre \\u00e0 droite sur Av. Rockefeller"
+              },
+              "localizedValues": {
+                "distance": { "text": "84 m" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            },
+            {
+              "distanceMeters": 30,
+              "staticDuration": "24s",
+              "polyline": { "encodedPolyline": "evzhHkf~KZs@" },
+              "startLocation": {
+                "latLng": { "latitude": 48.8024306, "longitude": 2.1259791 }
               },
               "endLocation": {
                 "latLng": {
@@ -846,8 +1118,8 @@
                 }
               },
               "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche\\nVoie \\u00e0 acc\\u00e8s limit\\u00e9"
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Tourner \\u00e0 droite\\nVoie \\u00e0 acc\\u00e8s limit\\u00e9"
               },
               "localizedValues": {
                 "distance": { "text": "30 m" },
@@ -901,7 +1173,40 @@
               },
               "travelMode": "WALK"
             }
-          ]
+          ],
+          "startPlaceDetails": "La Salle du Jeu de Paume",
+          "endPlaceDetails": "La galerie des Sculptures et des Moulages"
+        },
+        {
+          "steps": [
+            {
+              "staticDuration": "0s",
+              "polyline": { "encodedPolyline": "etzhHkl~K" },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 48.8021147,
+                  "longitude": 2.1269394999999998
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 48.8021147,
+                  "longitude": 2.1269394999999998
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "DEPART",
+                "instructions": "Aller\\nVoie \\u00e0 acc\\u00e8s limit\\u00e9"
+              },
+              "localizedValues": {
+                "distance": { "text": "1 m" },
+                "staticDuration": { "text": "1 minute" }
+              },
+              "travelMode": "WALK"
+            }
+          ],
+          "startPlaceDetails": "La galerie des Sculptures et des Moulages",
+          "endPlaceDetails": "La Petite \\u00c9curie"
         },
         {
           "steps": [
@@ -978,11 +1283,9 @@
               "travelMode": "WALK"
             },
             {
-              "distanceMeters": 180,
-              "staticDuration": "170s",
-              "polyline": {
-                "encodedPolyline": "avzhHsf~Ke@c@a@Sa@OSKG`@cAi@Fa@q@e@}@Y"
-              },
+              "distanceMeters": 47,
+              "staticDuration": "40s",
+              "polyline": { "encodedPolyline": "avzhHsf~Ke@c@i@W" },
               "startLocation": {
                 "latLng": {
                   "latitude": 48.80241040000001,
@@ -990,1656 +1293,109 @@
                 }
               },
               "endLocation": {
-                "latLng": {
-                  "latitude": 48.803940399999995,
-                  "longitude": 2.1269747999999997
-                }
+                "latLng": { "latitude": 48.8028069, "longitude": 2.1263247 }
               },
               "navigationInstruction": {
                 "maneuver": "TURN_RIGHT",
                 "instructions": "Prendre \\u00e0 droite sur Av. Rockefeller"
               },
               "localizedValues": {
-                "distance": { "text": "0,2 km" },
-                "staticDuration": { "text": "3 minutes" }
+                "distance": { "text": "47 m" },
+                "staticDuration": { "text": "1 minute" }
               },
               "travelMode": "WALK"
             },
             {
-              "distanceMeters": 23,
-              "staticDuration": "18s",
-              "polyline": { "encodedPolyline": "s_{hHql~KBc@" },
+              "distanceMeters": 116,
+              "staticDuration": "94s",
+              "polyline": { "encodedPolyline": "qxzhHoh~KhAkG" },
               "startLocation": {
-                "latLng": {
-                  "latitude": 48.803940399999995,
-                  "longitude": 2.1269747999999997
-                }
+                "latLng": { "latitude": 48.8028069, "longitude": 2.1263247 }
               },
               "endLocation": {
-                "latLng": { "latitude": 48.8039245, "longitude": 2.1271477 }
+                "latLng": { "latitude": 48.8024431, "longitude": 2.127659 }
               },
               "navigationInstruction": {
                 "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite\\nVoie \\u00e0 acc\\u00e8s limit\\u00e9"
+                "instructions": "Tourner \\u00e0 droite"
               },
               "localizedValues": {
-                "distance": { "text": "23 m" },
-                "staticDuration": { "text": "1 minute" }
+                "distance": { "text": "0,1 km" },
+                "staticDuration": { "text": "2 minutes" }
               },
               "travelMode": "WALK"
             },
             {
-              "distanceMeters": 21,
-              "staticDuration": "19s",
-              "polyline": { "encodedPolyline": "o_{hHum~KZJFC" },
+              "distanceMeters": 84,
+              "staticDuration": "91s",
+              "polyline": { "encodedPolyline": "gvzhH{p~Ko@[[KSOq@]" },
               "startLocation": {
-                "latLng": { "latitude": 48.8039245, "longitude": 2.1271477 }
+                "latLng": { "latitude": 48.8024431, "longitude": 2.127659 }
               },
               "endLocation": {
-                "latLng": {
-                  "latitude": 48.8037383,
-                  "longitude": 2.1271112999999997
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite\\nVoie \\u00e0 acc\\u00e8s limit\\u00e9\\nVotre destination se trouvera sur la droite."
-              },
-              "localizedValues": {
-                "distance": { "text": "21 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            }
-          ]
-        },
-        {
-          "steps": [
-            {
-              "distanceMeters": 21,
-              "staticDuration": "18s",
-              "polyline": { "encodedPolyline": "k~zhHmm~KGB[K" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.8037383,
-                  "longitude": 2.1271112999999997
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8039245, "longitude": 2.1271477 }
-              },
-              "navigationInstruction": {
-                "maneuver": "DEPART",
-                "instructions": "Prendre la direction nord vers Av. Rockefeller/D186\\nVoie \\u00e0 acc\\u00e8s limit\\u00e9"
-              },
-              "localizedValues": {
-                "distance": { "text": "21 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 23,
-              "staticDuration": "19s",
-              "polyline": { "encodedPolyline": "o_{hHum~KCb@" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8039245, "longitude": 2.1271477 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.803940399999995,
-                  "longitude": 2.1269747999999997
-                }
+                "latLng": { "latitude": 48.8031741, "longitude": 2.1280949 }
               },
               "navigationInstruction": {
                 "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche vers Av. Rockefeller/D186\\nVoie \\u00e0 acc\\u00e8s limit\\u00e9"
+                "instructions": "Tourner \\u00e0 gauche vers Av. de Paris"
               },
               "localizedValues": {
-                "distance": { "text": "23 m" },
-                "staticDuration": { "text": "1 minute" }
+                "distance": { "text": "84 m" },
+                "staticDuration": { "text": "2 minutes" }
               },
               "travelMode": "WALK"
             },
             {
-              "distanceMeters": 180,
-              "staticDuration": "166s",
-              "polyline": {
-                "encodedPolyline": "s_{hHql~K|@Xp@d@G`@bAh@Fa@^R`@Lh@^PP"
-              },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.803940399999995,
-                  "longitude": 2.1269747999999997
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.80241040000001,
-                  "longitude": 2.1260171
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur Av. Rockefeller/D186\\nContinuer de suivre Av. Rockefeller"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,2 km" },
-                "staticDuration": { "text": "3 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 30,
-              "staticDuration": "24s",
-              "polyline": { "encodedPolyline": "avzhHsf~KVk@" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.80241040000001,
-                  "longitude": 2.1260171
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.802293899999995,
-                  "longitude": 2.1262361
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche\\nVoie \\u00e0 acc\\u00e8s limit\\u00e9"
-              },
-              "localizedValues": {
-                "distance": { "text": "30 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 10,
-              "staticDuration": "9s",
-              "polyline": { "encodedPolyline": "iuzhH_h~KOK" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.802293899999995,
-                  "longitude": 2.1262361
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8023691, "longitude": 2.1262984 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche\\nVoie \\u00e0 acc\\u00e8s limit\\u00e9"
-              },
-              "localizedValues": {
-                "distance": { "text": "10 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 55,
-              "staticDuration": "46s",
-              "polyline": { "encodedPolyline": "yuzhHkh~Kr@_C" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8023691, "longitude": 2.1262984 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.8021147,
-                  "longitude": 2.1269394999999998
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite\\nVoie \\u00e0 acc\\u00e8s limit\\u00e9\\nVotre destination se trouvera sur la droite."
-              },
-              "localizedValues": {
-                "distance": { "text": "55 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            }
-          ]
-        },
-        {
-          "steps": [
-            {
-              "distanceMeters": 55,
-              "staticDuration": "45s",
-              "polyline": { "encodedPolyline": "etzhHkl~Ks@~B" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.8021147,
-                  "longitude": 2.1269394999999998
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8023691, "longitude": 2.1262984 }
-              },
-              "navigationInstruction": {
-                "maneuver": "DEPART",
-                "instructions": "Prendre la direction nord-ouest vers Av. Rockefeller\\nVoie \\u00e0 acc\\u00e8s limit\\u00e9"
-              },
-              "localizedValues": {
-                "distance": { "text": "55 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 10,
-              "staticDuration": "9s",
-              "polyline": { "encodedPolyline": "yuzhHkh~KNJ" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8023691, "longitude": 2.1262984 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.802293899999995,
-                  "longitude": 2.1262361
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche vers Av. Rockefeller\\nVoie \\u00e0 acc\\u00e8s limit\\u00e9"
-              },
-              "localizedValues": {
-                "distance": { "text": "10 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 30,
-              "staticDuration": "25s",
-              "polyline": { "encodedPolyline": "iuzhH_h~K[r@" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.802293899999995,
-                  "longitude": 2.1262361
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8024306, "longitude": 2.1259791 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite vers Av. Rockefeller\\nVoie \\u00e0 acc\\u00e8s limit\\u00e9"
-              },
-              "localizedValues": {
-                "distance": { "text": "30 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 32,
-              "staticDuration": "26s",
-              "polyline": { "encodedPolyline": "evzhHkf~Kj@|@DF" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8024306, "longitude": 2.1259791 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8021849, "longitude": 2.1256261 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur Av. Rockefeller"
-              },
-              "localizedValues": {
-                "distance": { "text": "32 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 52,
+              "distanceMeters": 49,
               "staticDuration": "40s",
-              "polyline": { "encodedPolyline": "stzhHed~KHHZf@VP" },
+              "polyline": { "encodedPolyline": "yzzhHqs~K^_C" },
               "startLocation": {
-                "latLng": { "latitude": 48.8021849, "longitude": 2.1256261 }
+                "latLng": { "latitude": 48.8031741, "longitude": 2.1280949 }
               },
               "endLocation": {
-                "latLng": { "latitude": 48.8018686, "longitude": 2.1252936 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_SLIGHT_LEFT",
-                "instructions": "Tourner l\\u00e9g\\u00e8rement \\u00e0 gauche pour rester sur Av. Rockefeller"
-              },
-              "localizedValues": {
-                "distance": { "text": "52 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 14,
-              "staticDuration": "10s",
-              "polyline": { "encodedPolyline": "urzhHab~KHI" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8018686, "longitude": 2.1252936 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.801816099999996,
-                  "longitude": 2.1253428
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur Av. Nepveu S"
-              },
-              "localizedValues": {
-                "distance": { "text": "14 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 44,
-              "staticDuration": "32s",
-              "polyline": { "encodedPolyline": "krzhHkb~KHW|@oA" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.801816099999996,
-                  "longitude": 2.1253428
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8014605, "longitude": 2.1258643 }
-              },
-              "navigationInstruction": {
-                "maneuver": "NAME_CHANGE",
-                "instructions": "Continuer sur Av. de Sceaux"
-              },
-              "localizedValues": {
-                "distance": { "text": "44 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 144,
-              "staticDuration": "124s",
-              "polyline": { "encodedPolyline": "cpzhHse~Kd@lACr@?n@IrE" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8014605, "longitude": 2.1258643 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8013409, "longitude": 2.1239057 }
+                "latLng": { "latitude": 48.8030074, "longitude": 2.1287268 }
               },
               "navigationInstruction": {
                 "maneuver": "TURN_RIGHT",
-                "instructions": "Prendre \\u00e0 droite sur Rue de Fontenay"
+                "instructions": "Prendre \\u00e0 droite sur Av. de Paris"
               },
               "localizedValues": {
-                "distance": { "text": "0,1 km" },
-                "staticDuration": { "text": "2 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 53,
-              "staticDuration": "41s",
-              "polyline": { "encodedPolyline": "kozhHmy}KxAd@" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8013409, "longitude": 2.1239057 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.800889, "longitude": 2.1237234 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur Rue du Jeu de Paume\\nVotre destination se trouvera sur la droite."
-              },
-              "localizedValues": {
-                "distance": { "text": "53 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            }
-          ]
-        },
-        {
-          "steps": [
-            {
-              "distanceMeters": 53,
-              "staticDuration": "45s",
-              "polyline": { "encodedPolyline": "qlzhHgx}KcBe@" },
-              "startLocation": {
-                "latLng": { "latitude": 48.800889, "longitude": 2.1237234 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.801387999999996,
-                  "longitude": 2.123911
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "DEPART",
-                "instructions": "Prendre la direction nord sur Rue du Jeu de Paume vers Rue de Fontenay"
-              },
-              "localizedValues": {
-                "distance": { "text": "53 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 124,
-              "staticDuration": "105s",
-              "polyline": { "encodedPolyline": "uozhHmy}KL{GM_@" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.801387999999996,
-                  "longitude": 2.123911
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.801387999999996,
-                  "longitude": 2.1254933
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Prendre \\u00e0 droite sur Rue de Fontenay"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,1 km" },
-                "staticDuration": { "text": "2 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 265,
-              "staticDuration": "235s",
-              "polyline": { "encodedPolyline": "uozhHic~KGPoA`BoGtHMJ" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.801387999999996,
-                  "longitude": 2.1254933
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.8032624,
-                  "longitude": 2.1233033999999997
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,3 km" },
-                "staticDuration": { "text": "4 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 92,
-              "staticDuration": "84s",
-              "polyline": { "encodedPolyline": "k{zhHsu}KEg@B]EQU}C" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.8032624,
-                  "longitude": 2.1233033999999997
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8034108, "longitude": 2.1245265 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Prendre \\u00e0 droite sur Av. Nepveu S"
-              },
-              "localizedValues": {
-                "distance": { "text": "92 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 31,
-              "staticDuration": "27s",
-              "polyline": { "encodedPolyline": "i|zhHi}}KYF]G" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8034108, "longitude": 2.1245265 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.803687, "longitude": 2.1245287 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche"
-              },
-              "localizedValues": {
-                "distance": { "text": "31 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 138,
-              "staticDuration": "131s",
-              "polyline": { "encodedPolyline": "a~zhHi}}K{AzI" },
-              "startLocation": {
-                "latLng": { "latitude": 48.803687, "longitude": 2.1245287 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.804154499999996,
-                  "longitude": 2.1227850000000004
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,1 km" },
-                "staticDuration": { "text": "2 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 168,
-              "staticDuration": "139s",
-              "polyline": {
-                "encodedPolyline": "}`{hHmr}KPNLPHTJr@@\\\\Ar@El@[tB?VN\\\\"
-              },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.804154499999996,
-                  "longitude": 2.1227850000000004
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8039731, "longitude": 2.1207523 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,2 km" },
-                "staticDuration": { "text": "2 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 85,
-              "staticDuration": "68s",
-              "polyline": { "encodedPolyline": "y_{hHue}Ku@xE" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8039731, "longitude": 2.1207523 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8042446, "longitude": 2.1196626 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite"
-              },
-              "localizedValues": {
-                "distance": { "text": "85 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 20,
-              "staticDuration": "16s",
-              "polyline": { "encodedPolyline": "oa{hH{~|Kc@H" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8042446, "longitude": 2.1196626 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.804417699999995,
-                  "longitude": 2.1196125
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite"
-              },
-              "localizedValues": {
-                "distance": { "text": "20 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 307,
-              "staticDuration": "237s",
-              "polyline": {
-                "encodedPolyline": "sb{hHq~|KmAlHR|@J`A@d@Cd@iArG"
-              },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.804417699999995,
-                  "longitude": 2.1196125
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8050254, "longitude": 2.1156968 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,3 km" },
-                "staticDuration": { "text": "4 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 8,
-              "staticDuration": "6s",
-              "polyline": { "encodedPolyline": "mf{hHcf|KKE" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8050254, "longitude": 2.1156968 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8050911, "longitude": 2.1157331 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Prendre \\u00e0 droite sur All. de l'Automne"
-              },
-              "localizedValues": {
-                "distance": { "text": "8 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 50,
-              "staticDuration": "34s",
-              "polyline": { "encodedPolyline": "yf{hHif|Ka@|B" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8050911, "longitude": 2.1157331 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.805259199999995,
-                  "longitude": 2.1151013
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche vers All. Royale"
-              },
-              "localizedValues": {
-                "distance": { "text": "50 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 68,
-              "staticDuration": "52s",
-              "polyline": { "encodedPolyline": "{g{hHkb|Ku@^y@l@" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.805259199999995,
-                  "longitude": 2.1151013
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8058151, "longitude": 2.1147115 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite vers All. Royale"
-              },
-              "localizedValues": {
-                "distance": { "text": "68 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 36,
-              "staticDuration": "28s",
-              "polyline": { "encodedPolyline": "kk{hH}_|K{@a@" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8058151, "longitude": 2.1147115 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.8061165,
-                  "longitude": 2.1148770999999997
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite vers All. Royale"
-              },
-              "localizedValues": {
-                "distance": { "text": "36 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 283,
-              "staticDuration": "199s",
-              "polyline": { "encodedPolyline": "gm{hH_a|KyDnU" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.8061165,
-                  "longitude": 2.1148770999999997
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.807048,
-                  "longitude": 2.1112789999999997
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur All. Royale"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,3 km" },
-                "staticDuration": { "text": "3 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 348,
-              "staticDuration": "273s",
-              "polyline": {
-                "encodedPolyline": "as{hHoj{Ko@a@[COBeAn@Yn@QL}AdJG`@m@hAERAn@"
-              },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.807048,
-                  "longitude": 2.1112789999999997
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.808855799999996,
-                  "longitude": 2.1082267
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,3 km" },
-                "staticDuration": { "text": "5 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 582,
-              "staticDuration": "497s",
-              "polyline": { "encodedPolyline": "k~{hHmwzKwL`DyBb@cJzBq@JMJS?" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.808855799999996,
-                  "longitude": 2.1082267
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8138662, "longitude": 2.1064952 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,6 km" },
-                "staticDuration": { "text": "8 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 28,
-              "staticDuration": "23s",
-              "polyline": { "encodedPolyline": "u}|hHslzKQd@WVGL" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8138662, "longitude": 2.1064952 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.814121899999996,
-                  "longitude": 2.1061225
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur Av. de Trianon"
-              },
-              "localizedValues": {
-                "distance": { "text": "28 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 68,
-              "staticDuration": "53s",
-              "polyline": { "encodedPolyline": "g_}hHgjzKr@tBHLBH" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.814121899999996,
-                  "longitude": 2.1061225
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.813794099999996,
-                  "longitude": 2.1054075
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur Pl. d'armes du Grand Trianon\\nVotre destination se trouvera sur la droite."
-              },
-              "localizedValues": {
-                "distance": { "text": "68 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            }
-          ]
-        },
-        {
-          "steps": [
-            {
-              "distanceMeters": 68,
-              "staticDuration": "59s",
-              "polyline": { "encodedPolyline": "e}|hHyezKCa@u@yB" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.813794099999996,
-                  "longitude": 2.1054075
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8140784, "longitude": 2.1061858 }
-              },
-              "navigationInstruction": {
-                "maneuver": "DEPART",
-                "instructions": "Prendre la direction nord-est sur Pl. d'armes du Grand Trianon vers Av. de Trianon"
-              },
-              "localizedValues": {
-                "distance": { "text": "68 m" },
+                "distance": { "text": "49 m" },
                 "staticDuration": { "text": "1 minute" }
               },
               "travelMode": "WALK"
             },
             {
               "distanceMeters": 80,
-              "staticDuration": "68s",
-              "polyline": { "encodedPolyline": "__}hHujzKm@|@q@t@YH" },
+              "staticDuration": "65s",
+              "polyline": { "encodedPolyline": "yyzhHqw~K_Bi@Yi@" },
               "startLocation": {
-                "latLng": { "latitude": 48.8140784, "longitude": 2.1061858 }
+                "latLng": { "latitude": 48.8030074, "longitude": 2.1287268 }
               },
               "endLocation": {
-                "latLng": {
-                  "latitude": 48.8146905,
-                  "longitude": 2.1055577999999997
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche"
-              },
-              "localizedValues": {
-                "distance": { "text": "80 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 23,
-              "staticDuration": "19s",
-              "polyline": { "encodedPolyline": "yb}hHwfzKCOMEMF" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.8146905,
-                  "longitude": 2.1055577999999997
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8148483, "longitude": 2.1056272 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite"
-              },
-              "localizedValues": {
-                "distance": { "text": "23 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 69,
-              "staticDuration": "67s",
-              "polyline": { "encodedPolyline": "yc}hHegzKa@sD" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8148483, "longitude": 2.1056272 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.8150164,
-                  "longitude": 2.1065283999999997
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite"
-              },
-              "localizedValues": {
-                "distance": { "text": "69 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 86,
-              "staticDuration": "66s",
-              "polyline": { "encodedPolyline": "{d}hHylzKOEEO[kCGU?O" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.8150164,
-                  "longitude": 2.1065283999999997
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.815306899999996,
-                  "longitude": 2.1075331
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche"
-              },
-              "localizedValues": {
-                "distance": { "text": "86 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 74,
-              "staticDuration": "59s",
-              "polyline": { "encodedPolyline": "uf}hHaszKe@aE" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.815306899999996,
-                  "longitude": 2.1075331
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.8154973,
-                  "longitude": 2.1084986999999997
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_SLIGHT_LEFT",
-                "instructions": "Tourner l\\u00e9g\\u00e8rement \\u00e0 gauche"
-              },
-              "localizedValues": {
-                "distance": { "text": "74 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 8,
-              "staticDuration": "7s",
-              "polyline": { "encodedPolyline": "{g}hHcyzKDS" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.8154973,
-                  "longitude": 2.1084986999999997
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8154699, "longitude": 2.108602 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_SLIGHT_RIGHT",
-                "instructions": "Tourner l\\u00e9g\\u00e8rement \\u00e0 droite"
-              },
-              "localizedValues": {
-                "distance": { "text": "8 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 41,
-              "staticDuration": "32s",
-              "polyline": { "encodedPolyline": "ug}hHwyzKUiB" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8154699, "longitude": 2.108602 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8155788, "longitude": 2.1091318 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_SLIGHT_LEFT",
-                "instructions": "Tourner l\\u00e9g\\u00e8rement \\u00e0 gauche"
-              },
-              "localizedValues": {
-                "distance": { "text": "41 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 6,
-              "staticDuration": "5s",
-              "polyline": { "encodedPolyline": "kh}hHa}zKHC" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8155788, "longitude": 2.1091318 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8155285, "longitude": 2.1091547 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite"
-              },
-              "localizedValues": {
-                "distance": { "text": "6 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 30,
-              "staticDuration": "25s",
-              "polyline": { "encodedPolyline": "ah}hHe}zKMmA" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8155285, "longitude": 2.1091547 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8155973, "longitude": 2.1095431 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche\\nPrendre les escaliers"
-              },
-              "localizedValues": {
-                "distance": { "text": "30 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 2,
-              "staticDuration": "1s",
-              "polyline": { "encodedPolyline": "oh}hHs_{KA?" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8155973, "longitude": 2.1095431 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.8156117,
-                  "longitude": 2.1095379999999997
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche\\nVotre destination se trouvera sur la droite."
-              },
-              "localizedValues": {
-                "distance": { "text": "2 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            }
-          ]
-        },
-        {
-          "steps": [
-            {
-              "distanceMeters": 11,
-              "staticDuration": "11s",
-              "polyline": { "encodedPolyline": "qh}hHs_{KSF" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.8156117,
-                  "longitude": 2.1095379999999997
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.81570800000001,
-                  "longitude": 2.1095028
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "DEPART",
-                "instructions": "Prendre la direction nord\\nPrendre les escaliers"
-              },
-              "localizedValues": {
-                "distance": { "text": "11 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 33,
-              "staticDuration": "27s",
-              "polyline": { "encodedPolyline": "ei}hHk_{KGc@KDAIKG" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.81570800000001,
-                  "longitude": 2.1095028
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8158795, "longitude": 2.1097441 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite\\nPrendre les escaliers"
-              },
-              "localizedValues": {
-                "distance": { "text": "33 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 107,
-              "staticDuration": "82s",
-              "polyline": { "encodedPolyline": "gj}hH{`{KYGWM[u@IyAAw@" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8158795, "longitude": 2.1097441 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.8163312,
-                  "longitude": 2.1108474999999998
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_SLIGHT_LEFT",
-                "instructions": "Tourner l\\u00e9g\\u00e8rement \\u00e0 gauche"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,1 km" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 90,
-              "staticDuration": "71s",
-              "polyline": { "encodedPolyline": "am}hHyg{KYgAQ]kAi@" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.8163312,
-                  "longitude": 2.1108474999999998
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.816929099999996,
-                  "longitude": 2.111572
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_SLIGHT_LEFT",
-                "instructions": "Tourner l\\u00e9g\\u00e8rement \\u00e0 gauche"
-              },
-              "localizedValues": {
-                "distance": { "text": "90 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 102,
-              "staticDuration": "77s",
-              "polyline": { "encodedPolyline": "yp}hHil{KSs@SYc@eASa@CO?Y" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.816929099999996,
-                  "longitude": 2.111572
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.817433799999996,
-                  "longitude": 2.1126937999999997
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,1 km" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 112,
-              "staticDuration": "90s",
-              "polyline": { "encodedPolyline": "}s}hHis{KOMK]MOk@G]Le@`@GEGO" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.817433799999996,
-                  "longitude": 2.1126937999999997
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.8182784,
-                  "longitude": 2.1128991999999998
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,1 km" },
-                "staticDuration": { "text": "2 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 26,
-              "staticDuration": "21s",
-              "polyline": { "encodedPolyline": "gy}hHst{K?WMk@" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.8182784,
-                  "longitude": 2.1128991999999998
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8183526, "longitude": 2.1132366 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite"
-              },
-              "localizedValues": {
-                "distance": { "text": "26 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 107,
-              "staticDuration": "89s",
-              "polyline": { "encodedPolyline": "uy}hHwv{Kk@Bi@EYC_@EOHWX" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8183526, "longitude": 2.1132366 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.819271799999996,
-                  "longitude": 2.1131192
-                }
+                "latLng": { "latitude": 48.803619, "longitude": 2.1291525 }
               },
               "navigationInstruction": {
                 "maneuver": "TURN_LEFT",
                 "instructions": "Tourner \\u00e0 gauche\\nVotre destination se trouvera sur la gauche."
               },
               "localizedValues": {
-                "distance": { "text": "0,1 km" },
+                "distance": { "text": "80 m" },
                 "staticDuration": { "text": "1 minute" }
               },
               "travelMode": "WALK"
             }
-          ]
-        },
-        {
-          "steps": [
-            {
-              "distanceMeters": 585,
-              "staticDuration": "468s",
-              "polyline": {
-                "encodedPolyline": "m_~hH_v{K`@a@LA`@Hl@@JBj@Cb@]lASp@PPD^RXFj@h@JL^DZl@~@Zd@FVNRDFVTrBDf@HTHP@\\\\@^T^R`AFt@"
-              },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.819271799999996,
-                  "longitude": 2.1131192
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.815288699999996,
-                  "longitude": 2.1102336
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "DEPART",
-                "instructions": "Prendre la direction sud-est"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,6 km" },
-                "staticDuration": { "text": "8 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 37,
-              "staticDuration": "28s",
-              "polyline": { "encodedPolyline": "qf}hH}c{Kb@CVK" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.815288699999996,
-                  "longitude": 2.1102336
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.814994899999995,
-                  "longitude": 2.1103061999999997
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche vers All. des deux Trianons"
-              },
-              "localizedValues": {
-                "distance": { "text": "37 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 21,
-              "staticDuration": "16s",
-              "polyline": { "encodedPolyline": "ud}hHmd{KL~@" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.814994899999995,
-                  "longitude": 2.1103061999999997
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.8149242,
-                  "longitude": 2.1099916999999997
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Prendre \\u00e0 droite sur All. des deux Trianons"
-              },
-              "localizedValues": {
-                "distance": { "text": "21 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 267,
-              "staticDuration": "195s",
-              "polyline": { "encodedPolyline": "gd}hHmb{KnMwE" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.8149242,
-                  "longitude": 2.1099916999999997
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8125997, "longitude": 2.1110666 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur Av. du Petit Trianon"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,3 km" },
-                "staticDuration": { "text": "3 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 355,
-              "staticDuration": "281s",
-              "polyline": { "encodedPolyline": "wu|hHei{Kv@h@~DjBJ?dFzBfB`A" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8125997, "longitude": 2.1110666 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8096325, "longitude": 2.1093708 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_SLIGHT_RIGHT",
-                "instructions": "Prendre l\\u00e9g\\u00e8rement \\u00e0 droite sur All. Saint-Antoine"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,4 km" },
-                "staticDuration": { "text": "5 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 409,
-              "staticDuration": "352s",
-              "polyline": { "encodedPolyline": "ec|hHq~zKzByLNsAhC{N" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8096325, "longitude": 2.1093708 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.808243499999996,
-                  "longitude": 2.114538
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur All. de C\\u00e9r\\u00e8s et de Flore/All. des Pr\\u00e9s"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,4 km" },
-                "staticDuration": { "text": "6 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 19,
-              "staticDuration": "15s",
-              "polyline": { "encodedPolyline": "oz{hH{~{KN@JS" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.808243499999996,
-                  "longitude": 2.114538
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8080964, "longitude": 2.1146325 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Prendre \\u00e0 droite sur All. du Printemps"
-              },
-              "localizedValues": {
-                "distance": { "text": "19 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 10,
-              "staticDuration": "8s",
-              "polyline": { "encodedPolyline": "sy{hHm_|K?Y" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8080964, "longitude": 2.1146325 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8080966, "longitude": 2.1147576 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche pour rester sur All. du Printemps"
-              },
-              "localizedValues": {
-                "distance": { "text": "10 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 121,
-              "staticDuration": "107s",
-              "polyline": { "encodedPolyline": "sy{hHg`|KdEeC" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8080966, "longitude": 2.1147576 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8071098, "longitude": 2.1154341 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,1 km" },
-                "staticDuration": { "text": "2 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 11,
-              "staticDuration": "9s",
-              "polyline": { "encodedPolyline": "ms{hHmd|KJJD?" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8071098, "longitude": 2.1154341 }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.80702350000001,
-                  "longitude": 2.1153744
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite vers All. Royale"
-              },
-              "localizedValues": {
-                "distance": { "text": "11 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 13,
-              "staticDuration": "11s",
-              "polyline": { "encodedPolyline": "{r{hHad|KFO?M" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.80702350000001,
-                  "longitude": 2.1153744
-                }
-              },
-              "endLocation": {
-                "latLng": {
-                  "latitude": 48.806979899999995,
-                  "longitude": 2.1155185999999997
-                }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Tourner \\u00e0 gauche vers All. Royale"
-              },
-              "localizedValues": {
-                "distance": { "text": "13 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 110,
-              "staticDuration": "96s",
-              "polyline": { "encodedPolyline": "sr{hH_e|KjBkAl@YZI" },
-              "startLocation": {
-                "latLng": {
-                  "latitude": 48.806979899999995,
-                  "longitude": 2.1155185999999997
-                }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8060688, "longitude": 2.1160843 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite vers All. Royale"
-              },
-              "localizedValues": {
-                "distance": { "text": "0,1 km" },
-                "staticDuration": { "text": "2 minutes" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 26,
-              "staticDuration": "22s",
-              "polyline": { "encodedPolyline": "}l{hHoh|KRaA" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8060688, "longitude": 2.1160843 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8059748, "longitude": 2.1164102 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_LEFT",
-                "instructions": "Prendre \\u00e0 gauche sur All. Royale"
-              },
-              "localizedValues": {
-                "distance": { "text": "26 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            },
-            {
-              "distanceMeters": 14,
-              "staticDuration": "11s",
-              "polyline": { "encodedPolyline": "il{hHqj|KTN" },
-              "startLocation": {
-                "latLng": { "latitude": 48.8059748, "longitude": 2.1164102 }
-              },
-              "endLocation": {
-                "latLng": { "latitude": 48.8058597, "longitude": 2.1163347 }
-              },
-              "navigationInstruction": {
-                "maneuver": "TURN_RIGHT",
-                "instructions": "Tourner \\u00e0 droite\\nVotre destination se trouvera sur la droite."
-              },
-              "localizedValues": {
-                "distance": { "text": "14 m" },
-                "staticDuration": { "text": "1 minute" }
-              },
-              "travelMode": "WALK"
-            }
-          ]
+          ],
+          "startPlaceDetails": "La Petite \\u00c9curie",
+          "endPlaceDetails": "La Grande \\u00c9curie"
         }
       ],
-      "distanceMeters": 11652,
-      "duration": "9555s",
+      "distanceMeters": 7499,
+      "duration": "6137s",
       "polyline": {
-        "encodedPolyline": "sk{hHaj|KwCaBGTiCuAm@^QaAsJeFiCvJSP{J`_@e@T{NhFGm@c@LW@kBn@QDDh@D@FF@HJEFb@RGSFGc@KDAIGGEAEi@`Bi@ZKb@CVKFl@tOuFJIRFxI_\\\\DWT{@Dg@bCgJPQdCiJDq@JYJEB@zEtBbCpAJm@~EdCn@cElExBb@It@yEO]?WZyBDi@@s@A]Ks@IUMQQO`DuQSO?Yb@qA_@OFa@UKbAqGCE^{B_Bi@Yi@Xh@~Ah@_@zBBDcApGTJG`@bAh@Fa@^R`@Lh@^PPVk@OKr@_Cs@~BNJWj@e@c@a@Sa@OSKG`@cAi@Fa@q@e@}@YBc@ZJFCGB[KCb@|@Xp@d@G`@bAh@Fa@^R`@Lh@^PPVk@OKr@_Cs@~BNJ[r@j@|@DFHHZf@VPHIHW|@oAd@lACr@?n@IrExAd@cBe@L{GM_@GPoA`BoGtHMJEg@B]EQU}CYF]G{AzIPNLPHTJr@@\\\\Ar@El@[tB?VN\\\\u@xEc@HmAlHR|@J`A@d@Cd@iArGKEa@|Bu@^y@l@{@a@yDnUo@a@[COBeAn@Yn@QL}AdJG`@m@hAERAn@wL`DyBb@cJzBq@JMJS?Qd@WVGLr@tBHLBHCa@u@yBm@|@q@t@YHCOMEMFa@sDOEEO[kCGU?Oe@aEDSUiBHCMmAA?SFGc@KDAIKGYGWM[u@IyAAw@YgAQ]kAi@Ss@SYc@eASa@CO?YOMK]MOk@G]Le@`@GEGO?WMk@k@Bi@EYC_@EOHWX`@a@LA`@Hl@@JBj@Cb@]lASp@PPD^RXFj@h@JL^DZl@~@Zd@FVNRDFVTrBDf@HTHP@\\\\@^T^R`AFt@b@CVKL~@nMwEv@h@~DjBJ?dFzBfB`AzByLNsAhC{NN@JS?YdEeCJJD?FO?MjBkAl@YZIRaATN"
-      }
+        "encodedPolyline": "s}zhHez~KXh@~Ah@_@zBBDcApGTJG`@^Nc@pA?XRNaDtQPNLPHTJr@@\\\\Ar@El@[tB?VN\\\\u@xEc@HmEyBo@bE_FeCKl@eEwBkCkAWEKLEPKLQ`@}BzIA`@cCfJSP{J`_@e@T{NhFGm@c@LW@KcAOs@Uc@Cy@Q]EWOiBCQIg@EE_@KYKSA_A[[m@c@IMQm@c@QE_@S{@SGCsAT]Zk@Bi@EYC_@EOHWX`@a@LA`@Hl@@JBj@CLt@?LNTXUJK\\\\Mj@FLNJ\\\\NL@^FTb@z@Pd@RXNl@jAh@R\\\\VfAB|AFr@Zt@f@RL@FF@HJEFb@RGSFGc@KDAIGGEAEi@`Bi@ZKb@CVKFl@tOuFJIRFxI_\\\\DWT{@Dg@bCgJPQdCiJDq@JYJEB@zEtBbCpAJm@~EdCn@cElExBb@It@yEO]?WZyBDi@@s@A]Ks@IUMQQOzA{I\\\\FXGT|CDPC\\\\Df@LKrHaJj@u@FQLQHTCr@?n@IrExAd@yAe@JmF?q@@We@mA}@nAIVIHWQa@o@C?c@u@MQZs@OKr@_Cs@~BNJWj@e@c@i@WhAkGo@[[KSOq@]^_C_Bi@Yi@"
+      },
+      "optimizedIntermediateWaypointIndex": [4, 3, 2, 1, 0]
     }
   ]
 }
