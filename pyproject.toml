@@ -11,9 +11,11 @@ dependencies = [
     "llama-index>=0.14.3",
     "llama-index-embeddings-huggingface>=0.6.1",
     "llama-index-llms-mistralai>=0.8.1",
-    "llama-index-vector-stores-qdrant>=0.8.5",
+    "llama-index-vector-stores-weaviate>=0.8.1",
     "pydantic>=2.11.9",
     "python-dotenv>=1.1.1",
-    "qdrant-client>=1.15.1",
+    "sentence-transformers>=3.0.0",
+    "weaviate-client>=4.0.0",
+    "mistralai>=1.0.0",
     "uvicorn>=0.37.0",
 ]
