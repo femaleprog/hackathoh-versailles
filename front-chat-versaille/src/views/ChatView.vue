@@ -1,17 +1,18 @@
-// src/views/ChatView.vue
-
 <template>
-  <div class="main-layout-container">
+  <div class="main-layout-container" :class="{ 'map-is-open': isMapOpen }">
     <div id="chat-container">
       <header class="chat-header">
         <h1>Le Scribe Royal</h1>
         <p>Votre humble serviteur digital</p>
+        <button @click="toggleMap" class="map-toggle-btn">
+          {{ isMapOpen ? "Fermer la Carte" : "Ouvrir la Carte" }}
+        </button>
       </header>
       <MessageDisplay :messages="messages" />
       <UserInput @send-message="handleNewMessage" />
     </div>
 
-    <div class="map-area">
+    <div class="map-area" :class="{ 'is-open': isMapOpen }">
       <MapDisplay
         v-if="routeJson"
         :route-data="routeJson"
@@ -32,6 +33,7 @@
 </template>
 
 <script>
+// The <script> section remains unchanged.
 import MessageDisplay from "@/components/MessageDisplay.vue";
 import UserInput from "@/components/UserInput.vue";
 import MapDisplay from "@/components/MapDisplay.vue";
@@ -46,6 +48,9 @@ export default {
     MapDisplay,
   },
   setup() {
+    // --- NEW: State for map visibility ---
+    const isMapOpen = ref(false); // Map is closed by default
+
     const routeJson = ref(routeJsonData);
     const selectedLegIndex = ref(0);
 
@@ -59,6 +64,11 @@ export default {
 
     const selectLeg = (index) => {
       selectedLegIndex.value = index;
+    };
+
+    // --- NEW: Function to toggle map visibility ---
+    const toggleMap = () => {
+      isMapOpen.value = !isMapOpen.value;
     };
 
     const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
@@ -130,8 +140,6 @@ export default {
 
           const chunk = decoder.decode(value, { stream: true });
 
-          // The API sends data in SSE (Server-Sent Events) format.
-          // Each message is prefixed with "data: " and ends with "\n\n".
           const lines = chunk.split("\n\n");
 
           for (const line of lines) {
@@ -144,7 +152,6 @@ export default {
                 const parsed = JSON.parse(data);
                 const content = parsed.choices[0]?.delta?.content;
                 if (content && currentBotMessage) {
-                  // Append the content chunk to the bot message's text
                   currentBotMessage.text += content;
                 }
               } catch (e) {
@@ -169,6 +176,8 @@ export default {
       routeJson,
       selectedLegIndex,
       selectLeg,
+      isMapOpen, // Expose new state
+      toggleMap, // Expose new function
     };
   },
 };
@@ -184,37 +193,57 @@ export default {
   --border-light: #e0d8c5;
 }
 
-/* MODIFIED: Reverted to the original side-by-side layout */
 .main-layout-container {
   display: flex;
-  /* flex-direction: row; is the default, so this line isn't strictly needed */
   height: 100vh;
-  width: 100vw;
+  max-width: 900px;
+  margin: 0 auto;
+  border-left: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light);
   background-color: var(--background-main);
+  overflow: hidden;
+  transition: max-width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* MODIFIED: Map area now contains map + buttons, stacked vertically */
-.map-area {
-  flex: 1; /* The map area will take 1 part of the available space */
-  height: 100vh;
-  display: flex;
-  flex-direction: column; /* Stacks the map on top of the button selector */
+.main-layout-container.map-is-open {
+  max-width: 100vw;
+  border-left: none;
+  border-right: none;
 }
 
-/* MODIFIED: Reverted to its original state for the side-by-side layout */
 #chat-container {
-  flex: 1; /* The chat will take 1 part of the space. */
+  flex: 1 1 auto; /* Allow chat to grow and shrink */
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-width: 800px;
-  margin: 0;
+  min-width: 450px;
   background-color: var(--background-main);
-  border-right: 1px solid var(--border-light); /* Back to border-right */
+  border-right: 1px solid var(--border-light);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+  position: relative;
+}
+
+.map-area {
+  flex: 0 0 0; /* Don't grow, don't shrink, start at 0 width */
+  width: 0;
+  opacity: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: flex-basis 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity 0.4s ease-in-out;
+}
+
+/* State when the map is open */
+.map-area.is-open {
+  flex-basis: 50%; /* Grow to take 50% of the space */
+  opacity: 1;
 }
 
 .chat-header {
+  position: relative; /* Needed for positioning the toggle button */
   padding: 20px;
   background-color: #fff;
   color: var(--text-primary);
@@ -238,7 +267,30 @@ export default {
   opacity: 0.7;
 }
 
-/* Styles for the leg selector buttons (no changes needed here) */
+.map-toggle-btn {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  padding: 8px 16px;
+  font-family: "Source Serif Pro", serif;
+  font-weight: 600;
+  border: 1px solid var(--border-light);
+  background-color: white;
+  color: var(--text-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.map-toggle-btn:hover {
+  background-color: var(--color-gold);
+  border-color: var(--color-gold);
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .leg-selector {
   display: flex;
   justify-content: center;
@@ -247,6 +299,7 @@ export default {
   background-color: #fff;
   border-top: 1px solid var(--border-light);
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .leg-selector button {

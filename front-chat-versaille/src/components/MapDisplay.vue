@@ -1,5 +1,3 @@
-// src/components/MapDisplay.vue
-
 <template>
   <div class="map-container">
     <iframe
@@ -48,16 +46,15 @@ export default {
 
       const steps = leg.steps;
 
-      // --- FIX START ---
-      // Correctly access the nested latLng object using camelCase
       const origin = steps[0].startLocation.latLng;
       const destination = steps[steps.length - 1].endLocation.latLng;
 
-      // Correctly access the latitude and longitude properties
       const originString = `${origin.latitude},${origin.longitude}`;
       const destinationString = `${destination.latitude},${destination.longitude}`;
-      // --- FIX END ---
 
+      // --- FIX ---
+      // The previous URL was malformed. This uses the correct Google Maps
+      // Embed API endpoint and URL structure for directions.
       return `https://www.google.com/maps/embed/v1/directions?key=${googleApiKey}&origin=${originString}&destination=${destinationString}&mode=walking`;
     });
 
