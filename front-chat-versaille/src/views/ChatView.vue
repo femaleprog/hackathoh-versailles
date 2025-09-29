@@ -1,26 +1,40 @@
 <template>
-  <div id="chat-container">
-    <header class="chat-header">
-      <h1>Le Scribe Royal</h1>
-      <p>Votre humble serviteur digital</p>
-    </header>
-    <MessageDisplay :messages="messages" />
-    <UserInput @send-message="handleNewMessage" />
+  <div class="main-layout-container">
+    <div id="chat-container">
+      <header class="chat-header">
+        <h1>Le Scribe Royal</h1>
+        <p>Votre humble serviteur digital</p>
+      </header>
+      <MessageDisplay :messages="messages" />
+      <UserInput @send-message="handleNewMessage" />
+    </div>
+
+    <div class="map-area">
+      <MapDisplay v-if="routeJson" :route-data="routeJson" />
+    </div>
   </div>
 </template>
 
 <script>
 import MessageDisplay from "@/components/MessageDisplay.vue";
 import UserInput from "@/components/UserInput.vue";
+import MapDisplay from "@/components/MapDisplay.vue"; // 1. Import the new component
 import { ref } from "vue";
+
+// 2. Import your JSON data
+import routeJsonData from "@/route-data.json"; // Assuming you save the JSON in 'src/route-data.json'
 
 export default {
   name: "ChatView",
   components: {
     MessageDisplay,
     UserInput,
+    MapDisplay, // 3. Register the new component
   },
   setup() {
+    // 4. Store your JSON data in a ref
+    const routeJson = ref(routeJsonData);
+
     const messages = ref([
       {
         id: 1,
@@ -29,14 +43,10 @@ export default {
       },
     ]);
 
-    // Retrieve the API key from environment variables
     const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
-    console.log(apiKey);
-
     const mistralApiUrl = "https://api.mistral.ai/v1/chat/completions";
 
     const handleNewMessage = async (newMessageText) => {
-      // Add user's message
       messages.value.push({
         id: Date.now(),
         text: newMessageText,
@@ -52,7 +62,6 @@ export default {
         return;
       }
 
-      // Call the Mistral API directly from the browser
       try {
         const response = await fetch(mistralApiUrl, {
           method: "POST",
@@ -74,7 +83,6 @@ export default {
         const data = await response.json();
         const botReply = data.choices[0].message.content;
 
-        // Add the AI's response
         messages.value.push({
           id: Date.now() + 1,
           text: botReply,
@@ -93,6 +101,7 @@ export default {
     return {
       messages,
       handleNewMessage,
+      routeJson, // 5. Expose the data to the template
     };
   },
 };
@@ -101,21 +110,35 @@ export default {
 <style scoped>
 /* --- Versailles Color Palette --- */
 :root {
-  --background-main: #f8f5ed; /* Creamy white from the website */
-  --text-primary: #3a3a3a; /* Dark, soft black for text */
-  --color-gold: #b38e55; /* Muted gold for accents and buttons */
+  --background-main: #f8f5ed;
+  --text-primary: #3a3a3a;
+  --color-gold: #b38e55;
   --color-dark-blue: #0a192f;
   --border-light: #e0d8c5;
 }
 
+/* New styles for the two-column layout */
+.main-layout-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--background-main);
+}
+
+.map-area {
+  flex: 1; /* The map will take 1 part of the available space */
+  height: 100vh;
+}
+
+/* Modified styles for the chat container */
 #chat-container {
+  flex: 1; /* The chat will take 1 part of the space. Change to flex: 2; to make it wider */
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-width: 800px;
-  margin: auto;
+  max-width: 800px; /* You might want to adjust or remove this */
+  margin: 0; /* Remove auto margin */
   background-color: var(--background-main);
-  border-left: 1px solid var(--border-light);
   border-right: 1px solid var(--border-light);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
