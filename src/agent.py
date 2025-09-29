@@ -1,4 +1,5 @@
-# src/agent.py (CORRIGÉ)
+# src/agent.py
+
 import json
 import os
 import time
@@ -16,11 +17,9 @@ from llama_index.core.agent.workflow import (
 from llama_index.core.tools import FunctionTool
 from llama_index.llms.mistralai import MistralAI
 
-# Import RAG tools
-from src.tools.rag import (
-    versailles_context_tool,
-    versailles_expert_tool
-)
+# Import tools
+from src.tools.rag import versailles_context_tool, versailles_expert_tool
+from src.tools.schedule_scraper import scrape_versailles_schedule
 
 
 def sum_numbers(a: int, b: int) -> int:
@@ -59,6 +58,11 @@ class Agent:
                 fn=versailles_context_tool,
                 name="versailles_context",
                 description="Get raw contextual information from Versailles knowledge base. Returns relevant document excerpts for complex analysis or when you need to combine Versailles information with other data.",
+            ),
+            FunctionTool.from_defaults(
+                fn=scrape_versailles_schedule,
+                name="get_versailles_schedule",
+                description="Retrieves the opening hours and schedule for the Palace of Versailles and its estate for a specific date. The input must be a date string in 'YYYY-MM-DD' format.",
             ),
         ]
 
