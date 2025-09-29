@@ -9,14 +9,11 @@ class ChatMessage(BaseModel):
 
 
 class ChatCompletionRequest(BaseModel):
-    model: str  # ex: "mistral-small-latest", "mistral-large-latest"
+    model: str = "mistral-medium-2508"
     messages: List[ChatMessage]
     temperature: Optional[float] = 0.7
     max_tokens: Optional[int] = None
     stream: bool = False
-    # On peut ajouter d'autres champs OpenAI si nécessaire (top_p, etc.)
 
     class Config:
-        # Permet de capturer les champs non définis (ex: top_p)
-        # et de les transférer quand même
         extra = "allow"

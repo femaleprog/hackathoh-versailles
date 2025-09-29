@@ -2,11 +2,13 @@ import os
 from contextlib import asynccontextmanager
 
 import httpx
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from app.schema import ChatCompletionRequest
 
+load_dotenv()
 # --- Configuration ---
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 if not MISTRAL_API_KEY:
@@ -29,6 +31,11 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Proxy Mistral API (OpenAI-like)", lifespan=lifespan)
 
 # --- Endpoint Proxy ---
+
+
+@app.get("/")
+def root():
+    return "Versailles Chatbot"
 
 
 @app.post("/v1/chat/completions")
