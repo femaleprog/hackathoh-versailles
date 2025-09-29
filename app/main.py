@@ -51,7 +51,7 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
     Proxy pour l'agent LlamaIndex
     """
     agent: Agent = request.app.state.agent
-    agent.system_prompt = SYSTEM_PROMPTS["chat"]
+    agent.agent.system_prompt = SYSTEM_PROMPTS["chat"]
 
     try:
         query = payload.messages[-1].content
@@ -105,7 +105,7 @@ async def quantitative_eval_route(payload: EvalCompletionRequest, request: Reque
     """
 
     agent: Agent = request.app.state.agent
-    agent.system_prompt = SYSTEM_PROMPTS["eval"]
+    agent.agent.system_prompt = SYSTEM_PROMPTS["eval"]
     query = payload.question
 
     try:

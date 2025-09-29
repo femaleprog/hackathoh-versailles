@@ -27,7 +27,7 @@ class Agent:
     Un agent encapsulant un FunctionAgent de LlamaIndex avec un LLM Mistral.
     """
 
-    def __init__(self, system_prompt):
+    def __init__(self):
         """Initialise l'agent, le LLM et les outils."""
 
         load_dotenv()
@@ -46,12 +46,10 @@ class Agent:
             ),
         ]
 
-        self.system_prompt = ""
-
         self.agent = FunctionAgent(
             llm=self.llm,
             tools=self.tools,
-            system_message=system_prompt,
+            system_prompt="",
             verbose=True,
         )
 
