@@ -4,4 +4,13 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "fastapi>=0.118.0",
+    "llama-index>=0.14.3",
+    "llama-index-embeddings-huggingface>=0.6.1",
+    "llama-index-vector-stores-qdrant>=0.8.5",
+    "pydantic>=2.11.9",
+    "python-dotenv>=1.1.1",
+    "qdrant-client>=1.15.1",
+    "uvicorn>=0.37.0",
+]
