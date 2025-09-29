@@ -4,7 +4,7 @@ import os
 import time
 import uuid
 from datetime import datetime
-from typing import AsyncGenerator
+from typing import Any, AsyncGenerator, Dict
 
 from dotenv import load_dotenv
 from llama_index.core.agent.workflow import (
@@ -54,6 +54,18 @@ class Agent:
             verbose=True,
         )
 
+    def _format_chunk(self, content: str) -> str:
+        chunk = {
+            "id": 123,
+            "object": "chat.completion.chunk",
+            "created": int(datetime.now().timestamp()),
+            "model": "Mistral",
+            "choices": [
+                {"index": 0, "delta": {"content": content}, "finish_reason": None}
+            ],
+        }
+        return f"data: {json.dumps(chunk)}\n\n"
+
     def _get_nonstream_response_template(
         self,
         response_id: str,
@@ -86,6 +98,16 @@ class Agent:
             ],
         }
         return response
+
+    async def _internal_streamer(self, query) -> AsyncGenerator[str, None]:
+        try:
+            handler = self.agent.run(query)
+
+            async for event in handler.stream_events():
+                if isinstance(event, AgentStream):
+                    yield self._format_chunk(event.delta)
+        except Exception as e:
+            raise e
 
     async def chat_completion_non_stream(self, query: str) -> str:
         """Traite une requête en mode non-stream."""
@@ -120,39 +142,7 @@ class Agent:
                 return response
         return response
 
-    async def chat_completion_stream(self, query: str) -> AsyncGenerator:
+    def chat_completion_stream(self, query: str) -> AsyncGenerator:
         """Traite une requête en mode stream."""
 
-        response_stream = await self.agent.astream_chat(query)  # Does not work!!
-
-        async for chunk in response_stream.response_gen:
-            chunk_data = {
-                "id": f"chatcmpl-{int(time.time())}",
-                "object": "chat.completion.chunk",
-                "created": int(time.time()),
-                "model": "mistral-large-agent",
-                "choices": [
-                    {
-                        "index": 0,
-                        "delta": {"content": chunk.delta},
-                        "finish_reason": None,
-                    }
-                ],
-            }
-            yield f"data: {json.dumps(chunk_data)}\n\n"
-
-        final_data = {
-            "id": f"chatcmpl-{int(time.time())}",
-            "object": "chat.completion.chunk",
-            "created": int(time.time()),
-            "model": "mistral-large-agent",
-            "choices": [
-                {
-                    "index": 0,
-                    "delta": {},
-                    "finish_reason": "stop",
-                }
-            ],
-        }
-        yield f"data: {json.dumps(final_data)}\n\n"
-        yield "data: [DONE]\n\n"
+        return self._internal_streamer(query)
