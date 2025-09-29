@@ -44,18 +44,24 @@ export default {
 </script>
 
 <style scoped>
+/* Inherit colors from ChatView */
+:root {
+  --text-primary: #3a3a3a;
+  --border-light: #e0d8c5;
+}
+
 .message-area {
   flex-grow: 1;
   overflow-y: auto;
-  padding: 20px;
+  padding: 25px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 18px;
 }
 
 .message-wrapper {
   display: flex;
-  max-width: 70%;
+  max-width: 80%; /* Modern chat UIs use a wider bubble */
 }
 
 .message-wrapper.user {
@@ -70,21 +76,25 @@ export default {
 
 .message-bubble {
   padding: 12px 18px;
-  border-radius: 20px;
+  border-radius: 12px; /* Softer, more modern radius */
   font-family: "Source Serif Pro", serif;
-  line-height: 1.5;
+  line-height: 1.6;
+  font-size: 1rem;
 }
 
+/* Modern, clean look inspired by ChatGPT/Mistral */
 .user .message-bubble {
-  background-color: #003366; /* Deep Royal Blue */
-  color: #f0e6d2; /* Cream */
-  border-bottom-right-radius: 5px;
+  background-color: #e9e9eb; /* Neutral grey for user */
+  color: #000;
 }
 
 .bot .message-bubble {
-  background-color: #fdf6e3; /* Light Cream */
-  color: #3a2d0b;
-  border: 1px solid #d4af37;
-  border-bottom-left-radius: 5px;
+  background-color: #ffffff; /* Clean white for bot */
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+}
+
+.message-bubble p {
+  margin: 0;
 }
 </style>

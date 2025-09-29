@@ -5,14 +5,21 @@
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Source+Serif+Pro:ital@0;1&display=swap");
 
+/* --- Versailles Light Theme Palette --- */
+:root {
+  --background-global: #fdfcf9; /* A very light, warm off-white */
+  --background-container: #f8f5ed; /* Creamy parchment for the chat area */
+  --text-primary: #4a443a; /* A softer, brownish-black for text */
+  --color-gold: #b38e55; /* Muted gold for accents */
+  --border-light: #e0d8c5; /* Light border color */
+  --user-message-bg: #ebe3d5; /* Warm beige for user messages */
+}
+
 body {
   margin: 0;
   font-family: "Source Serif Pro", serif;
-  background-color: #0a192f; /* A dark, regal blue */
-  background-image: url("~@/assets/background.jpg"); /* Make sure you have this image */
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  color: #f0e6d2; /* Creamy off-white */
+
+  background-color: var(--background-global);
+  color: var(--text-primary);
 }
 </style>

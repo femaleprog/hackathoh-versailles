@@ -56,36 +56,49 @@ export default {
 </script>
 
 <style scoped>
+/* --- Versailles Color Palette --- */
+:root {
+  --background-main: #f8f5ed; /* Creamy white from the website */
+  --text-primary: #3a3a3a; /* Dark, soft black for text */
+  --color-gold: #b38e55; /* Muted gold for accents and buttons */
+  --color-dark-blue: #0a192f;
+  --border-light: #e0d8c5;
+}
+
 #chat-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
   max-width: 800px;
   margin: auto;
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(212, 175, 55, 0.4);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  background-color: var(--background-main);
+  border-left: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  /* Removed backdrop-filter for an opaque, readable background like ChatGPT */
 }
 
 .chat-header {
   padding: 20px;
-  background-color: rgba(10, 25, 47, 0.8);
-  color: #d4af37; /* Gold */
+  background-color: #fff;
+  color: var(--text-primary);
   text-align: center;
-  border-bottom: 2px solid #d4af37;
+  border-bottom: 1px solid var(--border-light);
   font-family: "Cormorant Garamond", serif;
+  flex-shrink: 0; /* Prevents header from shrinking */
 }
 
 .chat-header h1 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 700;
+  color: var(--color-gold);
 }
 
 .chat-header p {
-  margin: 0;
+  margin: 5px 0 0;
   font-style: italic;
-  opacity: 0.8;
+  font-family: "Source Serif Pro", serif;
+  opacity: 0.7;
 }
 </style>

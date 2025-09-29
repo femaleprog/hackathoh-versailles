@@ -35,35 +35,51 @@ export default {
 </script>
 
 <style scoped>
+/* Inherit colors from ChatView */
+:root {
+  --background-main: #f8f5ed;
+  --text-primary: #3a3a3a;
+  --color-gold: #b38e55;
+  --border-light: #e0d8c5;
+}
+
 .input-form {
   display: flex;
-  padding: 15px;
-  background-color: rgba(10, 25, 47, 0.8);
-  border-top: 2px solid #d4af37;
+  padding: 20px;
+  background-color: var(--background-main);
+  border-top: 1px solid var(--border-light);
+  flex-shrink: 0; /* Prevents input area from shrinking */
 }
 
 .text-input {
   flex-grow: 1;
-  padding: 12px 15px;
-  border-radius: 20px;
-  border: 1px solid #d4af37;
-  background-color: #fdf6e3;
-  color: #3a2d0b;
+  padding: 12px 20px;
+  border-radius: 8px; /* Less rounded for a more formal look */
+  border: 1px solid var(--border-light);
+  background-color: #ffffff;
+  color: var(--text-primary);
   font-family: "Source Serif Pro", serif;
   font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .text-input::placeholder {
-  color: #8c7d5b;
+  color: #999;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(179, 142, 85, 0.2); /* Focus ring for accessibility */
 }
 
 .send-button {
-  margin-left: 10px;
+  margin-left: 12px;
   padding: 12px 25px;
-  border-radius: 20px;
+  border-radius: 8px;
   border: none;
-  background-color: #d4af37; /* Gold */
-  color: #0a192f; /* Dark Blue */
+  background-color: var(--color-gold);
+  color: #ffffff;
   font-family: "Cormorant Garamond", serif;
   font-weight: bold;
   font-size: 1rem;
@@ -72,6 +88,6 @@ export default {
 }
 
 .send-button:hover {
-  background-color: #c09d2e;
+  background-color: #a17d4a; /* A darker shade of gold for hover */
 }
 </style>
