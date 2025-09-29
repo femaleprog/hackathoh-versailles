@@ -1,11 +1,16 @@
 import os
 import requests
-from enum import Enum
 import logging
 
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from typing import Literal
+from langfuse import observe
+from langfuse import Langfuse
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Replace with your API key
 API_KEY = os.getenv("GOOGLE_API_KEY")
@@ -22,6 +27,7 @@ class SearchPlaceToolParams(BaseModel):
     )
 
 
+@observe
 def search_places_in_versailles(
     query: str,
     fields: list[PlaceField] = [
@@ -86,6 +92,7 @@ class RouteToolParams(BaseModel):
     )
 
 
+@observe
 def get_best_route_between_places(places: list[str]):
     """
     Calculate the optimal walking route between multiple places using Google Routes API.
@@ -164,6 +171,7 @@ def get_best_route_between_places(places: list[str]):
     return json_response
 
 
+@observe
 def get_weather_in_versailles(n_days: int):
 
     # Google Weather API endpoint for Versailles

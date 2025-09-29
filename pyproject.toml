@@ -16,4 +16,7 @@ dependencies = [
     "python-dotenv>=1.1.1",
     "qdrant-client>=1.15.1",
     "uvicorn>=0.37.0",
+    "langfuse>=3.5.2",
+    "openinference-instrumentation-llama-index>=4.3.5",
+    "llama-index-llms-openai>=0.5.6",
 ]

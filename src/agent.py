@@ -5,6 +5,11 @@ import time
 import uuid
 from datetime import datetime
 from typing import Any, AsyncGenerator, Dict
+from src.tools.google import (
+    search_places_in_versailles,
+    get_best_route_between_places,
+    get_weather_in_versailles,
+)
 
 from dotenv import load_dotenv
 from llama_index.core.agent.workflow import (
@@ -15,8 +20,22 @@ from llama_index.core.agent.workflow import (
 )
 from llama_index.core.tools import FunctionTool
 from llama_index.llms.mistralai import MistralAI
+from openinference.instrumentation.llama_index import LlamaIndexInstrumentor
+from langfuse import Langfuse, observe
+
+LlamaIndexInstrumentor().instrument()
 
 
+from src.utils import get_langfuse
+
+langfuse = get_langfuse()
+
+# Create the callback handler for LlamaIndex
+# langfuse_callback_handler = LlamaIndexCallbackHandler(langfuse_client=langfuse)
+# callback_manager = CallbackManager([langfuse_callback_handler])
+
+
+@observe()
 def sum_numbers(a: int, b: int) -> int:
     """Additionne deux nombres entiers."""
     return a + b
@@ -43,6 +62,21 @@ class Agent:
                 fn=sum_numbers,
                 # name="sum_numbers",
                 description="Allows the LLM to sum up two numbers",
+            ),
+            FunctionTool.from_defaults(
+                fn=get_best_route_between_places,
+                # name="sum_numbers",
+                description="Allows the LLM to get the best route between many places in the Versailles Castle",
+            ),
+            # FunctionTool.from_defaults(
+            #     fn=search_places_in_versailles,
+            #     # name="search_places_in_versailles",
+            #     description="Allows the LLM to search for places in the Versailles Castle",
+            # ),
+            FunctionTool.from_defaults(
+                fn=get_weather_in_versailles,
+                # name="get_weather_in_versailles",
+                description="Allows the LLM to get the weather in Versailles for the next n days",
             ),
         ]
 
