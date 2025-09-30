@@ -40,7 +40,7 @@ uv sync
 
 **Start the API server:**
 ```bash
-uv run python app/main.py
+uvicorn run app.main:app --reload
 ```
 
 The API will be available at `http://localhost:8000`
