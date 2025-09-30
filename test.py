@@ -356,7 +356,7 @@ async def main():
     tester = AgentTester()
 
     # Run all tests (or limit to first N tests for quick testing)
-    await tester.run_all_tests(limit=2)  # Test first 2 queries for quick validation
+    await tester.run_all_tests()  # Test first 2 queries for quick validation
     # await tester.run_all_tests()  # Test all queries
 
     print("\n✅ All tests completed!")
