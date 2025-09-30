@@ -4,17 +4,11 @@ An intelligent, accessibility-focused AI assistant for planning visits to the Pa
 
 ## 🌟 Key Features
 
-### 🎯 **Tool-Based Query Routing** ⚡ NEW v2
-- **LLM Tool Selection**: Automatically identifies which tools/APIs are needed (Maps, Weather, KB, etc.)
-- **Accurate Routing**: Routes "Where is X?" to Maps API, not just knowledge base
-- **Parallel Execution**: Independent tools run in parallel for faster responses
-- **Smart Synthesis**: Combines multiple data sources into comprehensive answers
-
-### 🎯 **Intelligent Query Routing** ⚡ v1
-- **LLM-based Route Decision**: Automatically determines if query needs decomposition or direct RAG
-- **Speed Optimization**: Simple queries (e.g., "What time does it open?") get instant answers (1-2s)
-- **Smart Decomposition**: Complex queries dynamically broken into optimal sub-queries by LLM
-- **Dependency Management**: Identifies and respects dependencies between sub-queries
+### 🎯 **Intelligent Query Routing & Tool Orchestration**
+- **Pattern-Based Routing**: Fast query analysis using regex patterns + LLM entity extraction
+- **Smart Tool Selection**: Automatically identifies required APIs (Maps, Weather, Schedule, Knowledge Base)
+- **Multi-Source Integration**: Seamlessly combines official knowledge base with real-time external APIs
+- **Optimized Execution**: Sequential tool calls with context aggregation for comprehensive answers
 
 ### 🧠 **Enhanced Query Planning**
 - **Intelligent User Profiling**: Automatically detects visitor types (families, elderly, accessibility needs, etc.)
