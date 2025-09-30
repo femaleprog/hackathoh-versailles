@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@googlemaps/polyline-codec": "^1.0.28",
+    "@mistralai/mistralai": "^1.10.0",
     "axios": "^1.12.2",
     "dompurify": "^3.2.7",
     "marked": "^16.3.0",
