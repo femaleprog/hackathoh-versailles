@@ -8,7 +8,7 @@ const routes = [
     name: "Home",
     // This route will now redirect to a new chat session
     redirect: () => {
-      return { path: `/chat/${uuidv4()}` };
+      return { path: `/chat_interface/${uuidv4()}` };
     },
   },
   {
