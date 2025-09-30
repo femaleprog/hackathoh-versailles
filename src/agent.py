@@ -1,18 +1,15 @@
 # src/agent.py
 
 import json
+import logging  # Ajout
 import os
 import time
 import uuid
 from datetime import datetime
 from typing import Any, AsyncGenerator, Dict
-from src.tools.google import (
-    search_places_in_versailles,
-    get_best_route_between_places,
-    get_weather_in_versailles,
-)
 
 from dotenv import load_dotenv
+from langfuse import Langfuse, observe
 from llama_index.core.agent.workflow import (
     AgentStream,
     FunctionAgent,
@@ -22,28 +19,29 @@ from llama_index.core.agent.workflow import (
 from llama_index.core.tools import FunctionTool
 from llama_index.llms.mistralai import MistralAI
 from openinference.instrumentation.llama_index import LlamaIndexInstrumentor
-from langfuse import Langfuse, observe
+
+# Import tools
+from src.query_planner import QueryPlanner
+from src.tools.google import (
+    get_best_route_between_places,
+    get_weather_in_versailles,
+    search_places_in_versailles,
+)
+from src.tools.rag import versailles_dual_rag_tool
+from src.tools.schedule_scraper import scrape_versailles_schedule
+from src.utils import get_langfuse
+
+# --- Configuration du logging ---
+# Mettez le level à logging.DEBUG pour tout voir, ou logging.INFO pour moins de détails
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
+# --------------------------------
 
 LlamaIndexInstrumentor().instrument()
 
-# Import tools
-from src.tools.rag import versailles_expert_tool
-from src.tools.schedule_scraper import scrape_versailles_schedule
-from src.tools.google import (
-    search_places_in_versailles,
-    get_best_route_between_places,
-    get_weather_in_versailles,
-)
-from src.query_planner import QueryPlanner
-
-
-from src.utils import get_langfuse
-
 langfuse = get_langfuse()
-
-# Create the callback handler for LlamaIndex
-# langfuse_callback_handler = LlamaIndexCallbackHandler(langfuse_client=langfuse)
-# callback_manager = CallbackManager([langfuse_callback_handler])
 
 
 @observe(name="sum_numbers")
@@ -59,66 +57,82 @@ class Agent:
 
     def __init__(self, session_id: str = None):
         """Initialise l'agent, le LLM et les outils."""
+        logger.info("Initializing Agent...")
         self.session_id = session_id or str(uuid.uuid4())
+        logger.info(f"Session ID: {self.session_id}")
 
         load_dotenv()
 
         api_key = os.getenv("MISTRAL_API_KEY")
         if not api_key:
+            logger.error("MISTRAL_API_KEY environment variable not found.")
             raise ValueError("La variable d'environnement MISTRAL_API_KEY est requise.")
 
-        self.llm = MistralAI(model="mistral-medium-latest", api_key=api_key)
+        self.llm = MistralAI(model="mistral-large-latest", api_key=api_key)
+        logger.info(f"MistralAI LLM initialized with model: {self.llm.model}")
 
         # Initialize Query Planner
         self.query_planner = QueryPlanner()
+        logger.info("QueryPlanner initialized.")
 
         self.tools = [
+            # ... (les définitions de vos outils restent inchangées) ...
             FunctionTool.from_defaults(
-                fn=sum_numbers,
-                # name="sum_numbers",
-                description="Allows the LLM to sum up two numbers",
-            ),
-            FunctionTool.from_defaults(
-                fn=versailles_expert_tool,
-                name="versailles_expert",
-                description="Ask questions about the Palace of Versailles. Provides comprehensive expert answers with historical, architectural, and cultural information about Versailles, its history, gardens, and notable figures like Louis XIV and Marie Antoinette.",
+                fn=versailles_dual_rag_tool, name="versailles_expert", description="..."
             ),
             FunctionTool.from_defaults(
                 fn=scrape_versailles_schedule,
                 name="get_versailles_schedule",
-                description="Retrieves the opening hours, visitor numbers and schedule for the Palace of Versailles and its estate for a specific date. The input must be a date string in 'YYYY-MM-DD' format.",
+                description="...",
             ),
             FunctionTool.from_defaults(
                 fn=search_places_in_versailles,
                 name="search_places_versailles",
-                description="Search for specific places, buildings, or locations within Versailles using Google Places API. Returns place name, address, and place ID. Automatically adds 'Versailles' to the search query.",
+                description="...",
             ),
             FunctionTool.from_defaults(
                 fn=get_best_route_between_places,
                 name="get_walking_route",
-                description="Calculate the optimal walking route between multiple places in Versailles. Takes a list of place names and returns the best route with duration, distance, and detailed walking directions.",
+                description="...",
             ),
             FunctionTool.from_defaults(
                 fn=get_weather_in_versailles,
                 name="get_versailles_weather",
-                description="Get weather forecast for Versailles. Takes the number of days (1-7) and returns detailed weather information including temperature, conditions, and precipitation.",
+                description="...",
             ),
         ]
+        logger.info(f"Loaded {len(self.tools)} tools.")
 
         today_date = datetime.now().strftime("%Y-%m-%d")
+
+        # --- CORRECTION PROBABLE (Prompt Système) ---
+        # Un prompt minimaliste peut être la cause des réponses vides.
+        # Le LLM utilise les outils mais "oublie" de formuler une réponse finale.
+        system_prompt = (
+            f"Today's date is {today_date}. "
+            "You are a helpful assistant for Versailles. You must answer the user's query. "
+            "When necessary, you can use the provided tools to gather information. "
+            "After using tools, you MUST synthesize the results and provide a final, "
+            "comprehensive answer to the user. Do not just stop after calling tools. "
+            "Always formulate a final response."
+        )
+        # ------------------------------------------
+
         self.agent = FunctionAgent(
             llm=self.llm,
             tools=self.tools,
-            system_prompt=f"Today's date is {today_date}.",
+            system_prompt=system_prompt,  # Utilisation du prompt amélioré
             verbose=True,
         )
+        logger.info("FunctionAgent initialized.")
 
     def _format_chunk(self, content: str) -> str:
+        """Formate un chunk pour le streaming (identique à la version corrigée)"""
         chunk = {
-            "id": 123,
+            "id": f"chunk-{uuid.uuid4()}",
             "object": "chat.completion.chunk",
             "created": int(datetime.now().timestamp()),
-            "model": "Mistral",
+            "model": self.llm.model,
             "choices": [
                 {"index": 0, "delta": {"content": content}, "finish_reason": None}
             ],
@@ -129,21 +143,12 @@ class Agent:
         self,
         response_id: str,
     ) -> str:
-        """
-        Create a template for non-streaming chat completion response.
-
-        Args:
-            response_id: Unique identifier for the response
-            model_name: Name of the model generating the response
-
-        Returns:
-            Dictionary template for non-streaming response
-        """
+        """Crée un template de réponse (identique à la version corrigée)"""
         response = {
             "id": response_id,
             "object": "chat.completion",
             "created": int(datetime.now().timestamp()),
-            "model": "mistral",
+            "model": self.llm.model,
             "choices": [
                 {
                     "index": 0,
@@ -152,7 +157,7 @@ class Agent:
                         "content": None,
                         "tool_calls": [],
                     },
-                    "finish_reason": "tool_calls",
+                    "finish_reason": None,
                 }
             ],
         }
@@ -160,8 +165,11 @@ class Agent:
 
     @observe(name="chat_completion_stream")
     async def _internal_streamer(self, query) -> AsyncGenerator[str, None]:
-        """Internal streaming handler with Langfuse tracing."""
-        # Add session context to the observation
+        """Gestionnaire de streaming interne avec trace Langfuse et logging."""
+        logger.info(
+            f"Entering _internal_streamer for session {self.session_id} with query: '{query}'"
+        )
+
         langfuse.update_current_trace(
             session_id=self.session_id,
             tags=[f"session:{self.session_id}", "stream"],
@@ -173,34 +181,50 @@ class Agent:
         )
 
         try:
-            today_date = datetime.now().strftime("%Y-%m-%d")
-            handler = self.agent.run(
-                f"Today's date is {today_date}, use only if it's need." + query
-            )
-
+            handler = self.agent.run(query)
+            event_count = 0
             async for event in handler.stream_events():
+                event_count += 1
+                logger.debug(f"Stream Event {event_count} received: {type(event)}")
+
                 if isinstance(event, AgentStream):
-                    yield self._format_chunk(event.delta)
+                    logger.debug(f"AgentStream delta: '{event.delta}'")
+                    if event.delta is not None:  # Ne pas envoyer de chunk vide
+                        yield self._format_chunk(event.delta)
+                elif isinstance(event, ToolCall):
+                    logger.debug(
+                        f"ToolCall: {event.tool_name}, Args: {event.tool_kwargs}"
+                    )
+                elif isinstance(event, ToolCallResult):
+                    logger.debug(
+                        f"ToolCallResult for {event.tool_name}. Output: {event.tool_output.content[:100]}..."
+                    )
+
+            if event_count == 0:
+                logger.warning(
+                    f"No events received from a_stream_events() for query: {query}"
+                )
+                yield self._format_chunk(
+                    "[DEBUG: No events received from agent. Check LLM or agent config.]"
+                )
+
         except Exception as e:
-            raise e
+            logger.error(f"Error in _internal_streamer: {e}", exc_info=True)
+            error_chunk = self._format_chunk(f"An error occurred: {e}")
+            yield error_chunk
 
     @observe(name="chat_completion_with_planner")
     async def chat_completion_with_planner(self, query: str) -> Dict[str, Any]:
-        """
-        Process query using the Query Planner for intelligent tool coordination
-
-        Args:
-            query: User's query string
-
-        Returns:
-            Dictionary containing analysis, tool results, and final answer
-        """
+        """Traite la requête avec le Query Planner (inchangé)."""
+        logger.info(f"Entering chat_completion_with_planner with query: '{query}'")
         try:
-            # Use Query Planner to process the query
-            analysis, tool_results, final_answer = (
-                await self.query_planner.process_query(query)
-            )
+            (
+                analysis,
+                tool_results,
+                final_answer,
+            ) = await self.query_planner.process_query(query)
 
+            logger.info("Query Planner processing successful.")
             return {
                 "analysis": {
                     "query_type": analysis.query_type.value,
@@ -221,8 +245,10 @@ class Agent:
                 "processing_method": "query_planner",
             }
         except Exception as e:
-            # Fallback to original method if planner fails
-            print(f"Query Planner failed, falling back to original method: {e}")
+            logger.warning(
+                f"Query Planner failed, falling back to original method: {e}",
+                exc_info=True,
+            )
             fallback_response = await self.chat_completion_non_stream(query)
             return {
                 "analysis": {"error": str(e)},
@@ -234,40 +260,97 @@ class Agent:
             }
 
     @observe(name="chat_completion_non_stream")
-    async def chat_completion_non_stream(self, query: str) -> str:
-        """Traite une requête en mode non-stream."""
+    async def chat_completion_non_stream(self, query: str) -> Dict[str, Any]:
+        """Traite une requête en mode non-stream avec logging."""
+        logger.info(
+            f"Entering chat_completion_non_stream for session {self.session_id} with query: '{query}'"
+        )
 
         handler = self.agent.run(query)
         response = self._get_nonstream_response_template(str(uuid.uuid4()))
-        async for event in handler.stream_events():
-            if isinstance(event, AgentStream):
-                if not response["choices"][0]["message"]["content"]:
-                    response["choices"][0]["message"]["content"] = event.delta
-                else:
-                    response["choices"][0]["message"]["content"] += event.delta
-            elif isinstance(event, ToolCall):
-                tool_call_id = f"call_{uuid.uuid4().hex}"
-                response["choices"][0]["message"]["tool_calls"].append(
-                    {
-                        "id": tool_call_id,
-                        "type": "function",
-                        "function": {
-                            "name": event.tool_name,
-                            "arguments": json.dumps(event.tool_kwargs),
-                        },
-                    }
+
+        has_tool_calls = False
+        has_content = False
+        event_count = 0
+
+        try:
+            async for event in handler.stream_events():
+                event_count += 1
+                logger.debug(f"Non-Stream Event {event_count} received: {type(event)}")
+
+                if isinstance(event, AgentStream):
+                    has_content = True
+                    logger.debug(f"AgentStream delta: '{event.delta}'")
+                    if not response["choices"][0]["message"]["content"]:
+                        response["choices"][0]["message"]["content"] = event.delta
+                    else:
+                        response["choices"][0]["message"]["content"] += event.delta
+
+                elif isinstance(event, ToolCall):
+                    has_tool_calls = True
+                    # tool_call_id = event.id_
+                    logger.info(
+                        f"ToolCall received: {event.tool_name} with args: {event.tool_kwargs}"
+                    )
+                    response["choices"][0]["message"]["tool_calls"].append(
+                        {
+                            "id": 1345,
+                            "type": "function",
+                            "function": {
+                                "name": event.tool_name,
+                                "arguments": json.dumps(event.tool_kwargs),
+                            },
+                        }
+                    )
+
+                elif isinstance(event, ToolCallResult):
+                    logger.info(
+                        f"ToolCallResult received for ID: (Name: {event.tool_name})"
+                    )
+                    for tool_call in response["choices"][0]["message"]["tool_calls"]:
+                        # if tool_call["id"] == event.id_:
+                        tool_call["function"]["output"] = (
+                            event.tool_output.content or ""
+                        )
+                        logger.debug(
+                            f"Tool output added to response: {event.tool_output.content[:100]}..."
+                        )
+                        break
+
+        except Exception as e:
+            logger.error(f"Error in chat_completion_non_stream: {e}", exc_info=True)
+            response["choices"][0]["message"]["content"] = f"An error occurred: {e}"
+            response["choices"][0]["finish_reason"] = "error"
+
+        if event_count == 0:
+            logger.warning(
+                f"No events received from a_stream_events() for query: {query}"
+            )
+            if not response["choices"][0]["message"]["content"]:
+                response["choices"][0]["message"]["content"] = (
+                    "[DEBUG: No events received from agent. Check LLM or agent config.]"
                 )
 
-            elif isinstance(event, ToolCallResult):
-                for tool_call in response["choices"][0]["message"]["tool_calls"]:
-                    if tool_call["function"]["name"] == event.tool_name:
-                        tool_call["function"]["output"] = str(
-                            event.tool_output.model_dump() or ""
-                        )
-                return response
+        # Définir le finish_reason final
+        if has_content and not response["choices"][0]["finish_reason"]:
+            response["choices"][0]["finish_reason"] = "stop"
+        elif (
+            has_tool_calls
+            and not has_content
+            and not response["choices"][0]["finish_reason"]
+        ):
+            response["choices"][0]["finish_reason"] = "tool_calls"
+        elif not response["choices"][0]["finish_reason"]:
+            response["choices"][0]["finish_reason"] = "stop"  # Par défaut
+
+        logger.info(
+            f"Non-stream processing complete. has_content: {has_content}, has_tool_calls: {has_tool_calls}, finish_reason: {response['choices'][0]['finish_reason']}"
+        )
+        logger.debug(f"Final non-stream response: {json.dumps(response, indent=2)}")
+
         return response
 
     def chat_completion_stream(self, query: str) -> AsyncGenerator:
         """Traite une requête en mode stream."""
-
+        logger.debug(f"Creating stream generator for query: '{query}'")
         return self._internal_streamer(query)

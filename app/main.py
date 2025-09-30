@@ -5,8 +5,8 @@ from contextlib import asynccontextmanager
 
 import httpx
 from dotenv import load_dotenv
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from app.schema import (
@@ -88,47 +88,15 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
         else:  # NON STREAM HANDLING - Use Query Planner
             # Try Query Planner first
             try:
-                planner_response = await agent.chat_completion_with_planner(query=query)
-                print(f"Query Planner Response: {planner_response}")
-                
-                response_content = planner_response["final_answer"]
-                final_response = {
-                    "id": f"cmpl-{int(time.time())}",
-                    "object": "chat.completion",
-                    "created": int(time.time()),
-                    "model": "mistral-medium-planner",
-                    "choices": [
-                        {
-                            "index": 0,
-                            "message": {
-                                "role": "assistant",
-                                "content": response_content,
-                            },
-                            "finish_reason": "stop",
-                        }
-                    ],
-                    "usage": {
-                        "prompt_tokens": 0,
-                        "completion_tokens": 0,
-                        "total_tokens": 0,
-                    },
-                    "query_analysis": planner_response.get("analysis", {}),
-                    "tools_used": list(planner_response.get("tool_results", {}).keys()),
-                    "processing_method": planner_response.get("processing_method", "query_planner")
-                }
-                return JSONResponse(content=final_response, status_code=200)
-            
-            except Exception as planner_error:
-                print(f"Query Planner failed: {planner_error}")
-                # Fallback to original method
                 response = await agent.chat_completion_non_stream(query=query)
-                print(response)
+                # print(f"Query Planner Response: {planner_response}")
+
                 response_content = response["choices"][0]["message"]["content"]
                 final_response = {
                     "id": f"cmpl-{int(time.time())}",
                     "object": "chat.completion",
                     "created": int(time.time()),
-                    "model": "mistral-medium-fallback",
+                    "model": "mistral-large-planner",
                     "choices": [
                         {
                             "index": 0,
@@ -144,11 +112,46 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
                         "completion_tokens": 0,
                         "total_tokens": 0,
                     },
-                    "processing_method": "fallback",
-                    "planner_error": str(planner_error)
+                    # "query_analysis": planner_response.get("analysis", {}),
+                    # "tools_used": list(planner_response.get("tool_results", {}).keys()),
+                    # "processing_method": planner_response.get(
+                    #     "processing_method", "query_planner"
+                    # ),
                 }
                 return JSONResponse(content=final_response, status_code=200)
 
+            # except Exception as planner_error:
+            #     print(f"Query Planner failed: {planner_error}")
+            #     # Fallback to original method
+            #     response = await agent.chat_completion_non_stream(query=query)
+            #     print(response)
+            #     response_content = response["choices"][0]["message"]["content"]
+            #     final_response = {
+            #         "id": f"cmpl-{int(time.time())}",
+            #         "object": "chat.completion",
+            #         "created": int(time.time()),
+            #         "model": "mistral-medium-fallback",
+            #         "choices": [
+            #             {
+            #                 "index": 0,
+            #                 "message": {
+            #                     "role": "assistant",
+            #                     "content": response_content,
+            #                 },
+            #                 "finish_reason": "stop",
+            #             }
+            #         ],
+            #         "usage": {
+            #             "prompt_tokens": 0,
+            #             "completion_tokens": 0,
+            #             "total_tokens": 0,
+            #         },
+            #         "processing_method": "fallback",
+            #         "planner_error": str(planner_error),
+            #     }
+            #     return JSONResponse(content=final_response, status_code=200)
+            except Exception as e:
+                print(f"Fail: {e}")
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Erreur interne du proxy: {str(e)}"
