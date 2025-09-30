@@ -48,7 +48,6 @@ import UserInput from "@/components/UserInput.vue";
 import MapDisplay from "@/components/MapDisplay.vue";
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import routeJsonData from "@/route-data.json";
 
 const emit = defineEmits(["conversation-updated"]);
 
@@ -63,7 +62,8 @@ const router = useRouter();
 
 // --- Reactive State ---
 const isMapOpen = ref(false);
-const routeJson = ref(routeJsonData);
+
+const routeJson = ref(null);
 const selectedLegIndex = ref(0);
 const messages = ref([]);
 
@@ -144,8 +144,7 @@ const handleNewMessage = async (newMessageText) => {
       text: "Hélas, la clé API de Mistral n'est pas configurée côté client.",
       sender: "bot",
     });
-    // --- MODIFIED ---
-    // Save and update even if there's a client-side error
+
     await saveConversation();
     emit("conversation-updated");
     return;
@@ -187,16 +186,23 @@ const handleNewMessage = async (newMessageText) => {
 
       const chunk = decoder.decode(value, { stream: true });
       const lines = chunk.split("\n\n");
-
       for (const line of lines) {
         if (line.startsWith("data: ")) {
           const data = line.substring(6);
-          if (data.trim() === "[DONE]") continue; // Use continue to process other lines in chunk
+          if (data.trim() === "[DONE]") continue;
+
           try {
             const parsed = JSON.parse(data);
-            const content = parsed.choices[0]?.delta?.content;
-            if (content && currentBotMessage) {
-              currentBotMessage.text += content;
+
+            if (parsed.object === "custom.walking_route") {
+              routeJson.value = parsed.data; // Assign the route data
+              isMapOpen.value = true; // Automatically open the map
+              selectLeg(0); // Select the first leg by default
+            } else {
+              const content = parsed.choices[0]?.delta?.content;
+              if (content && currentBotMessage) {
+                currentBotMessage.text += content;
+              }
             }
           } catch (e) {
             console.error("Could not parse stream chunk:", data, e);
@@ -212,18 +218,10 @@ const handleNewMessage = async (newMessageText) => {
         "Hélas, une erreur est survenue lors de la communication avec le Scribe. Veuillez réessayer.";
     }
   } finally {
-    // --- ADDED ---
-    // This block runs after the try/catch is complete, ensuring a predictable order.
-    // 1. Save the final state of the conversation.
     await saveConversation();
-    // 2. Then, tell the sidebar to refresh.
     emit("conversation-updated");
   }
 };
-
-// --- REMOVED ---
-// We no longer need the automatic watcher. Saving is now handled explicitly.
-// watch(messages, saveConversation, { deep: true });
 
 onMounted(() => {
   loadConversation();
@@ -232,7 +230,6 @@ watch(() => props.uuid, loadConversation);
 </script>
 
 <style scoped>
-/* ... styles remain unchanged ... */
 :root {
   --background-main: #f8f5ed;
   --text-primary: #3a3a3a;
