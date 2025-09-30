@@ -199,6 +199,29 @@ uv run python app/main.py
 - **Budget-Conscious Planning**: Cost-effective options and free alternatives
 - **Real-time Adaptation**: Dynamic planning based on weather and crowds
 
+## 📋 TODO List
+
+### 🎨 **Visualization Reasoning**
+- Display "weather/crowd-based adjustment" tags in frontend
+- Implement weather icon labels: ⚑ Sunny → Garden Priority / ☔ Rainy → Indoor Priority
+- Show crowd level adjustment hints and suggestions
+
+### ⚡ **Caching System**
+- Implement short-term caching for "official knowledge base retrieval results" (5-15 minutes)
+- Add caching mechanism for "Maps/Weather API" results
+- Reduce API call latency and improve system stability
+
+### 🍽️ **New Tools Integration**
+- Nearby restaurant recommendation tool (based on ratings and reviews)
+- Hotel recommendation system (based on user preferences and budget)
+- Integrate Google Places API for dining and accommodation information
+
+### 📅 **Travel Itinerary**
+- Implement detailed time point planning
+- Add distance and walking time calculations between attractions
+- Generate printable itinerary format
+- Include transportation methods and estimated duration
+
 ## 🔮 Future Enhancements
 
 - Multi-language response generation
