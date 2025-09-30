@@ -3,6 +3,9 @@ import os
 import time
 from contextlib import asynccontextmanager
 
+
+from typing import List
+import uuid  # Import the uuid library
 import httpx
 from dotenv import load_dotenv
 from fastapi import Body, FastAPI, HTTPException, Request
@@ -29,6 +32,36 @@ MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 SYSTEM_PROMPTS = load_prompts(
     filenames=["src/prompt_files/chat.txt", "src/prompt_files/eval.txt"]
 )
+CONVERSATION_MEMORY_FILE = "conversation_memory.json"
+
+
+# --- Helper functions for JSON memory ---
+
+
+def read_memory() -> dict:
+    """Reads the conversation memory from the JSON file."""
+
+    if not os.path.exists(CONVERSATION_MEMORY_FILE):
+
+        return {}
+
+    with open(CONVERSATION_MEMORY_FILE, "r", encoding="utf-8") as f:
+
+        try:
+
+            return json.load(f)
+
+        except json.JSONDecodeError:
+
+            return {}
+
+
+def write_memory(data: dict):
+    """Writes the conversation memory to the JSON file."""
+
+    with open(CONVERSATION_MEMORY_FILE, "w", encoding="utf-8") as f:
+
+        json.dump(data, f, indent=2, ensure_ascii=False)
 
 
 @asynccontextmanager
@@ -218,3 +251,69 @@ async def chat_redirect(payload: EvalCompletionRequest, request: Request):
     Redirect to the evaluate endpoint
     """
     return await quantitative_eval_route(payload, request)
+
+
+# CONV MEMORY ENDPOINTS
+
+
+@app.get("/v1/conversations", status_code=200)
+async def get_conversations_list():
+    """Returns a list of all conversation IDs and their first user message."""
+
+    memory = read_memory()
+
+    conv_list = []
+
+    for conv_id, data in memory.items():
+
+        first_message = "Nouvelle Conversation"
+
+        # Find the first user message for a better title
+
+        if data.get("messages"):
+
+            for msg in data["messages"]:
+
+                if msg.get("role") == "user":
+
+                    first_message = msg.get("content", first_message)
+
+                    break
+
+        conv_list.append({"uuid": conv_id, "title": first_message})
+
+    return JSONResponse(content=conv_list)
+
+
+@app.get("/v1/conversations/{conversation_id}", status_code=200)
+async def get_conversation_by_id(conversation_id: str):
+    """Returns the full message history for a given conversation UUID."""
+
+    memory = read_memory()
+
+    conversation = memory.get(conversation_id)
+
+    if not conversation:
+
+        raise HTTPException(status_code=404, detail="Conversation non trouvée.")
+
+    return JSONResponse(content=conversation.get("messages", []))
+
+
+@app.post("/v1/conversations/{conversation_id}", status_code=200)
+async def save_conversation(conversation_id: str, payload: List[ChatMessage]):
+    """Saves or updates the message history for a given conversation UUID."""
+
+    if not payload:
+
+        raise HTTPException(
+            status_code=400, detail="Le contenu des messages ne peut être vide."
+        )
+
+    memory = read_memory()
+
+    memory[conversation_id] = {"messages": [msg.dict() for msg in payload]}
+
+    write_memory(memory)
+
+    return JSONResponse(content={"status": "success", "uuid": conversation_id})
