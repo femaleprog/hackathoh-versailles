@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 
 import httpx
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 
@@ -40,6 +41,21 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Proxy Mistral API (OpenAI-like)", lifespan=lifespan)
 
 
+origins = [
+    "http://localhost:5173",  # Default Vue dev server port
+    "http://127.0.0.1:5173",
+    # Add any other origins you need
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Allows specific origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods (GET, POST, OPTIONS, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
+
+
 @app.get("/")
 def root():
     return "Versailles Chatbot"
@@ -69,32 +85,69 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
 
             return StreamingResponse(final_generator, media_type="text/event-stream")
 
-        else:  # NON STREAM HANDLING
-            response = await agent.chat_completion_non_stream(query=query)
-            print(response)
-            response_content = response["choices"][0]["message"]["content"]
-            final_response = {
-                "id": f"cmpl-{int(time.time())}",
-                "object": "chat.completion",
-                "created": int(time.time()),
-                "model": "mistral-large-agent",
-                "choices": [
-                    {
-                        "index": 0,
-                        "message": {
-                            "role": "assistant",
-                            "content": response_content,
-                        },
-                        "finish_reason": "stop",
-                    }
-                ],
-                "usage": {
-                    "prompt_tokens": 0,
-                    "completion_tokens": 0,
-                    "total_tokens": 0,
-                },  # Usage non suivi ici
-            }
-            return JSONResponse(content=final_response, status_code=200)
+        else:  # NON STREAM HANDLING - Use Query Planner
+            # Try Query Planner first
+            try:
+                planner_response = await agent.chat_completion_with_planner(query=query)
+                print(f"Query Planner Response: {planner_response}")
+                
+                response_content = planner_response["final_answer"]
+                final_response = {
+                    "id": f"cmpl-{int(time.time())}",
+                    "object": "chat.completion",
+                    "created": int(time.time()),
+                    "model": "mistral-medium-planner",
+                    "choices": [
+                        {
+                            "index": 0,
+                            "message": {
+                                "role": "assistant",
+                                "content": response_content,
+                            },
+                            "finish_reason": "stop",
+                        }
+                    ],
+                    "usage": {
+                        "prompt_tokens": 0,
+                        "completion_tokens": 0,
+                        "total_tokens": 0,
+                    },
+                    "query_analysis": planner_response.get("analysis", {}),
+                    "tools_used": list(planner_response.get("tool_results", {}).keys()),
+                    "processing_method": planner_response.get("processing_method", "query_planner")
+                }
+                return JSONResponse(content=final_response, status_code=200)
+            
+            except Exception as planner_error:
+                print(f"Query Planner failed: {planner_error}")
+                # Fallback to original method
+                response = await agent.chat_completion_non_stream(query=query)
+                print(response)
+                response_content = response["choices"][0]["message"]["content"]
+                final_response = {
+                    "id": f"cmpl-{int(time.time())}",
+                    "object": "chat.completion",
+                    "created": int(time.time()),
+                    "model": "mistral-medium-fallback",
+                    "choices": [
+                        {
+                            "index": 0,
+                            "message": {
+                                "role": "assistant",
+                                "content": response_content,
+                            },
+                            "finish_reason": "stop",
+                        }
+                    ],
+                    "usage": {
+                        "prompt_tokens": 0,
+                        "completion_tokens": 0,
+                        "total_tokens": 0,
+                    },
+                    "processing_method": "fallback",
+                    "planner_error": str(planner_error)
+                }
+                return JSONResponse(content=final_response, status_code=200)
 
     except Exception as e:
         raise HTTPException(

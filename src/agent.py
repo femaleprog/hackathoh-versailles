@@ -1,4 +1,5 @@
-# src/agent.py (CORRIGÉ)
+# src/agent.py
+
 import json
 import os
 import time
@@ -24,6 +25,16 @@ from openinference.instrumentation.llama_index import LlamaIndexInstrumentor
 from langfuse import Langfuse, observe
 
 LlamaIndexInstrumentor().instrument()
+
+# Import tools
+from src.tools.rag import versailles_expert_tool
+from src.tools.schedule_scraper import scrape_versailles_schedule
+from src.tools.google import (
+    search_places_in_versailles,
+    get_best_route_between_places,
+    get_weather_in_versailles,
+)
+from src.query_planner import QueryPlanner
 
 
 from src.utils import get_langfuse
@@ -56,7 +67,10 @@ class Agent:
         if not api_key:
             raise ValueError("La variable d'environnement MISTRAL_API_KEY est requise.")
 
-        self.llm = MistralAI(model="mistral-large-latest", api_key=api_key)
+        self.llm = MistralAI(model="mistral-medium-latest", api_key=api_key)
+
+        # Initialize Query Planner
+        self.query_planner = QueryPlanner()
 
         self.tools = [
             FunctionTool.from_defaults(
@@ -65,26 +79,37 @@ class Agent:
                 description="Allows the LLM to sum up two numbers",
             ),
             FunctionTool.from_defaults(
-                fn=get_best_route_between_places,
-                # name="sum_numbers",
-                description="Allows the LLM to get the best route between many places in the Versailles Castle",
+                fn=versailles_expert_tool,
+                name="versailles_expert",
+                description="Ask questions about the Palace of Versailles. Provides comprehensive expert answers with historical, architectural, and cultural information about Versailles, its history, gardens, and notable figures like Louis XIV and Marie Antoinette.",
             ),
-            # FunctionTool.from_defaults(
-            #     fn=search_places_in_versailles,
-            #     # name="search_places_in_versailles",
-            #     description="Allows the LLM to search for places in the Versailles Castle",
-            # ),
+            FunctionTool.from_defaults(
+                fn=scrape_versailles_schedule,
+                name="get_versailles_schedule",
+                description="Retrieves the opening hours, visitor numbers and schedule for the Palace of Versailles and its estate for a specific date. The input must be a date string in 'YYYY-MM-DD' format.",
+            ),
+            FunctionTool.from_defaults(
+                fn=search_places_in_versailles,
+                name="search_places_versailles",
+                description="Search for specific places, buildings, or locations within Versailles using Google Places API. Returns place name, address, and place ID. Automatically adds 'Versailles' to the search query.",
+            ),
+            FunctionTool.from_defaults(
+                fn=get_best_route_between_places,
+                name="get_walking_route",
+                description="Calculate the optimal walking route between multiple places in Versailles. Takes a list of place names and returns the best route with duration, distance, and detailed walking directions.",
+            ),
             FunctionTool.from_defaults(
                 fn=get_weather_in_versailles,
-                # name="get_weather_in_versailles",
-                description="Allows the LLM to get the weather in Versailles for the next n days",
+                name="get_versailles_weather",
+                description="Get weather forecast for Versailles. Takes the number of days (1-7) and returns detailed weather information including temperature, conditions, and precipitation.",
             ),
         ]
 
+        today_date = datetime.now().strftime("%Y-%m-%d")
         self.agent = FunctionAgent(
             llm=self.llm,
             tools=self.tools,
-            system_prompt="",
+            system_prompt=f"Today's date is {today_date}.",
             verbose=True,
         )
 
@@ -148,13 +173,65 @@ class Agent:
         )
 
         try:
-            handler = self.agent.run(query)
+            today_date = datetime.now().strftime("%Y-%m-%d")
+            handler = self.agent.run(
+                f"Today's date is {today_date}, use only if it's need." + query
+            )
 
             async for event in handler.stream_events():
                 if isinstance(event, AgentStream):
                     yield self._format_chunk(event.delta)
         except Exception as e:
             raise e
+
+    @observe(name="chat_completion_with_planner")
+    async def chat_completion_with_planner(self, query: str) -> Dict[str, Any]:
+        """
+        Process query using the Query Planner for intelligent tool coordination
+
+        Args:
+            query: User's query string
+
+        Returns:
+            Dictionary containing analysis, tool results, and final answer
+        """
+        try:
+            # Use Query Planner to process the query
+            analysis, tool_results, final_answer = (
+                await self.query_planner.process_query(query)
+            )
+
+            return {
+                "analysis": {
+                    "query_type": analysis.query_type.value,
+                    "confidence": analysis.confidence,
+                    "required_tools": analysis.required_tools,
+                    "entities": analysis.extracted_entities,
+                    "reasoning": analysis.reasoning,
+                },
+                "tool_results": {
+                    name: {
+                        "success": result.success,
+                        "data": result.data,
+                        "error": result.error,
+                    }
+                    for name, result in tool_results.items()
+                },
+                "final_answer": final_answer,
+                "processing_method": "query_planner",
+            }
+        except Exception as e:
+            # Fallback to original method if planner fails
+            print(f"Query Planner failed, falling back to original method: {e}")
+            fallback_response = await self.chat_completion_non_stream(query)
+            return {
+                "analysis": {"error": str(e)},
+                "tool_results": {},
+                "final_answer": fallback_response.get("choices", [{}])[0]
+                .get("message", {})
+                .get("content", "Error processing query"),
+                "processing_method": "fallback",
+            }
 
     @observe(name="chat_completion_non_stream")
     async def chat_completion_non_stream(self, query: str) -> str:
