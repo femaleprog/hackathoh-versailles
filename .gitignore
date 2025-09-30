@@ -211,3 +211,9 @@ __marimo__/
 
 node_modules
 .vite
+
+# Test results
+test_results_*.json
+test_output.log
+test_agent_simple.py
+test_stream.py
