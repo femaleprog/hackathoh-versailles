@@ -94,9 +94,7 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
 
     try:
         if payload.stream:
-            final_generator = agent.chat_completion_stream(
-                query=query, chat_history=payload.messages[:-1]
-            )
+            final_generator = agent.chat_completion_stream(query=query)
             return StreamingResponse(final_generator, media_type="text/event-stream")
         else:
             # Non-streaming logic remains the same
