@@ -93,41 +93,46 @@ class RouteToolParams(BaseModel):
 @observe(name="get_best_route_between_places")
 def get_best_route_between_places(places: list[str]):
     """
-    Calculate the optimal walking route between multiple places using Google Routes API.
+    Calculates the walking route between multiple places in the given order.
+
+    This function does not optimize the route; it follows the order of places
+    as they appear in the input list.
 
     Args:
-        places (list[str]): List of Google Place IDs to visit.
-        starting_place (str, optional): Place ID for the starting point.
-            If None, uses the first place in the list.
-        finishing_place (str, optional): Place ID for the destination.
-            If None, returns to the starting place.
+        places (list[str]): An ordered list of place names to visit.
 
     Returns:
-        dict: The route information from the API response including duration,
-              distance, polyline data and detailed steps.
+        dict: The route information from the API response, including duration,
+              distance, polyline data, and detailed steps for each leg.
 
     Raises:
         requests.exceptions.RequestException: If the API request fails.
+        ValueError: If fewer than two valid places are found.
     """
 
-    print("Getting best route between places:", places)
+    print("Getting route between places in the given order:", places)
     places_with_details = {
         place: json.loads(search_places_in_versailles(place)) for place in places
     }
 
-    used_places = {k: v for k, v in places_with_details.items() if "warning" not in v}
-    forgotten_places = {k: v for k, v in places_with_details.items() if "warning" in v}
-
-    logging.warning("Some places were not found: %s", forgotten_places)
-
-    starting_place = str(list(used_places.keys())[0])
-    finishing_place = str(list(used_places.keys())[0])
-
-    interim_places = [
-        place
-        for place in used_places.keys()
-        if place not in (starting_place, finishing_place)
+    # Filter out places that were not found, while preserving the original order
+    ordered_valid_places = [
+        p for p in places if "warning" not in places_with_details[p]
     ]
+
+    not_found_places = [p for p in places if "warning" in places_with_details[p]]
+    if not_found_places:
+        logging.warning(
+            "Some places were not found and will be skipped: %s", not_found_places
+        )
+
+    if len(ordered_valid_places) < 2:
+        raise ValueError("At least two valid places are required to calculate a route.")
+
+    # Define the route's origin, destination, and intermediate waypoints
+    starting_place_name = ordered_valid_places[0]
+    finishing_place_name = ordered_valid_places[-1]
+    interim_places_names = ordered_valid_places[1:-1]
 
     # Prepare the request to the Routes API
     routes_url = "https://routes.googleapis.com/directions/v2:computeRoutes"
@@ -135,36 +140,37 @@ def get_best_route_between_places(places: list[str]):
     routes_headers = {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": API_KEY,
-        "X-Goog-FieldMask": "routes.duration,routes.distanceMeters,routes.polyline,routes.legs.steps,routes.optimized_intermediate_waypoint_index",
+        # Field mask updated to remove optimization-related fields
+        "X-Goog-FieldMask": "routes.duration,routes.distanceMeters,routes.polyline,routes.legs.steps",
     }
 
     routes_payload = {
-        "origin": {"placeId": used_places[starting_place]["id"]},
-        "destination": {"placeId": used_places[finishing_place]["id"]},
-        "intermediates": [
-            {"placeId": used_places[place]["id"]} for place in interim_places
-        ],
+        "origin": {"placeId": places_with_details[starting_place_name]["id"]},
+        "destination": {"placeId": places_with_details[finishing_place_name]["id"]},
         "travelMode": "WALK",
     }
 
+    # Add intermediate waypoints to the payload if they exist
+    if interim_places_names:
+        routes_payload["intermediates"] = [
+            {"placeId": places_with_details[place]["id"]}
+            for place in interim_places_names
+        ]
+
+    # Make the API request
     routes_response = requests.post(
         routes_url, json=routes_payload, headers=routes_headers
     )
-
+    routes_response.raise_for_status()  # Raise an exception for HTTP errors
     json_response = routes_response.json()
 
-    optimized_waypoints = list(range(len(interim_places)))
-    print(optimized_waypoints, json_response)
+    if not json_response.get("routes"):
+        return {"error": "No route could be calculated for the given places."}
 
-    optimized_waypoints_names = [interim_places[i] for i in optimized_waypoints]
-    sublegs = [(starting_place, optimized_waypoints_names[0])]
-    for i in range(len(optimized_waypoints_names) - 1):
-        sublegs.append((optimized_waypoints_names[i], optimized_waypoints_names[i + 1]))
-    sublegs.append((optimized_waypoints_names[-1], finishing_place))
-
-    for leg, (tmp_start, tmp_end) in zip(json_response["routes"][0]["legs"], sublegs):
-        leg["startPlaceDetails"] = tmp_start
-        leg["endPlaceDetails"] = tmp_end
+    # Annotate the response legs with the original place names for clarity
+    for i, leg in enumerate(json_response["routes"][0]["legs"]):
+        leg["startPlaceDetails"] = ordered_valid_places[i]
+        leg["endPlaceDetails"] = ordered_valid_places[i + 1]
 
     return json_response
 
