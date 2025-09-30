@@ -66,12 +66,16 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
     """
     Proxy pour l'agent LlamaIndex
     """
-    agent: Agent = request.app.state.agent
+    # Create a new session ID for each request
+    session_id = request.headers.get("X-Session-ID") or f"session_{int(time.time())}"
+
+    # Create a new agent instance for this session
+    agent = Agent(session_id=session_id)
     agent.agent.system_prompt = SYSTEM_PROMPTS["chat"]
 
     try:
         query = payload.messages[-1].content
-        print(query)
+        print(f"Session {session_id}: {query}")
     except (AttributeError, IndexError, TypeError):
         raise HTTPException(status_code=400, detail="Payload de messages invalide.")
 
@@ -156,8 +160,13 @@ async def quantitative_eval_route(payload: EvalCompletionRequest, request: Reque
     """
     Proxy direct vers l'API Mistral (contourne l'agent)
     """
+    # Create a new session ID for evaluation requests
+    session_id = (
+        request.headers.get("X-Session-ID") or f"eval_session_{int(time.time())}"
+    )
 
-    agent: Agent = request.app.state.agent
+    # Create a new agent instance for this evaluation session
+    agent = Agent(session_id=session_id)
     agent.agent.system_prompt = SYSTEM_PROMPTS["eval"]
     query = payload.question
 

@@ -6,6 +6,11 @@ import time
 import uuid
 from datetime import datetime
 from typing import Any, AsyncGenerator, Dict
+from src.tools.google import (
+    search_places_in_versailles,
+    get_best_route_between_places,
+    get_weather_in_versailles,
+)
 
 from dotenv import load_dotenv
 from llama_index.core.agent.workflow import (
@@ -16,6 +21,10 @@ from llama_index.core.agent.workflow import (
 )
 from llama_index.core.tools import FunctionTool
 from llama_index.llms.mistralai import MistralAI
+from openinference.instrumentation.llama_index import LlamaIndexInstrumentor
+from langfuse import Langfuse, observe
+
+LlamaIndexInstrumentor().instrument()
 
 # Import tools
 from src.tools.rag import versailles_expert_tool
@@ -23,11 +32,21 @@ from src.tools.schedule_scraper import scrape_versailles_schedule
 from src.tools.google import (
     search_places_in_versailles,
     get_best_route_between_places,
-    get_weather_in_versailles
+    get_weather_in_versailles,
 )
 from src.query_planner import QueryPlanner
 
 
+from src.utils import get_langfuse
+
+langfuse = get_langfuse()
+
+# Create the callback handler for LlamaIndex
+# langfuse_callback_handler = LlamaIndexCallbackHandler(langfuse_client=langfuse)
+# callback_manager = CallbackManager([langfuse_callback_handler])
+
+
+@observe(name="sum_numbers")
 def sum_numbers(a: int, b: int) -> int:
     """Additionne deux nombres entiers."""
     return a + b
@@ -38,8 +57,9 @@ class Agent:
     Un agent encapsulant un FunctionAgent de LlamaIndex avec un LLM Mistral.
     """
 
-    def __init__(self):
+    def __init__(self, session_id: str = None):
         """Initialise l'agent, le LLM et les outils."""
+        self.session_id = session_id or str(uuid.uuid4())
 
         load_dotenv()
 
@@ -48,7 +68,7 @@ class Agent:
             raise ValueError("La variable d'environnement MISTRAL_API_KEY est requise.")
 
         self.llm = MistralAI(model="mistral-medium-latest", api_key=api_key)
-        
+
         # Initialize Query Planner
         self.query_planner = QueryPlanner()
 
@@ -138,7 +158,20 @@ class Agent:
         }
         return response
 
+    @observe(name="chat_completion_stream")
     async def _internal_streamer(self, query) -> AsyncGenerator[str, None]:
+        """Internal streaming handler with Langfuse tracing."""
+        # Add session context to the observation
+        langfuse.update_current_trace(
+            session_id=self.session_id,
+            tags=[f"session:{self.session_id}", "stream"],
+            metadata={
+                "agent_session": self.session_id,
+                "request_type": "stream",
+                "timestamp": datetime.now().isoformat(),
+            },
+        )
+
         try:
             today_date = datetime.now().strftime("%Y-%m-%d")
             handler = self.agent.run(
@@ -151,37 +184,41 @@ class Agent:
         except Exception as e:
             raise e
 
+    @observe(name="chat_completion_with_planner")
     async def chat_completion_with_planner(self, query: str) -> Dict[str, Any]:
         """
         Process query using the Query Planner for intelligent tool coordination
-        
+
         Args:
             query: User's query string
-            
+
         Returns:
             Dictionary containing analysis, tool results, and final answer
         """
         try:
             # Use Query Planner to process the query
-            analysis, tool_results, final_answer = await self.query_planner.process_query(query)
-            
+            analysis, tool_results, final_answer = (
+                await self.query_planner.process_query(query)
+            )
+
             return {
                 "analysis": {
                     "query_type": analysis.query_type.value,
                     "confidence": analysis.confidence,
                     "required_tools": analysis.required_tools,
                     "entities": analysis.extracted_entities,
-                    "reasoning": analysis.reasoning
+                    "reasoning": analysis.reasoning,
                 },
                 "tool_results": {
                     name: {
                         "success": result.success,
                         "data": result.data,
-                        "error": result.error
-                    } for name, result in tool_results.items()
+                        "error": result.error,
+                    }
+                    for name, result in tool_results.items()
                 },
                 "final_answer": final_answer,
-                "processing_method": "query_planner"
+                "processing_method": "query_planner",
             }
         except Exception as e:
             # Fallback to original method if planner fails
@@ -190,10 +227,13 @@ class Agent:
             return {
                 "analysis": {"error": str(e)},
                 "tool_results": {},
-                "final_answer": fallback_response.get("choices", [{}])[0].get("message", {}).get("content", "Error processing query"),
-                "processing_method": "fallback"
+                "final_answer": fallback_response.get("choices", [{}])[0]
+                .get("message", {})
+                .get("content", "Error processing query"),
+                "processing_method": "fallback",
             }
 
+    @observe(name="chat_completion_non_stream")
     async def chat_completion_non_stream(self, query: str) -> str:
         """Traite une requête en mode non-stream."""
 
