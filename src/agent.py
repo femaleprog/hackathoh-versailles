@@ -18,7 +18,7 @@ from llama_index.core.tools import FunctionTool
 from llama_index.llms.mistralai import MistralAI
 
 # Import tools
-from src.tools.rag import versailles_context_tool, versailles_expert_tool
+from src.tools.rag import versailles_expert_tool
 from src.tools.schedule_scraper import scrape_versailles_schedule
 
 
@@ -53,11 +53,6 @@ class Agent:
                 fn=versailles_expert_tool,
                 name="versailles_expert",
                 description="Ask questions about the Palace of Versailles. Provides comprehensive expert answers with historical, architectural, and cultural information about Versailles, its history, gardens, and notable figures like Louis XIV and Marie Antoinette.",
-            ),
-            FunctionTool.from_defaults(
-                fn=versailles_context_tool,
-                name="versailles_context",
-                description="Get raw contextual information from Versailles knowledge base. Returns relevant document excerpts for complex analysis or when you need to combine Versailles information with other data.",
             ),
             FunctionTool.from_defaults(
                 fn=scrape_versailles_schedule,
