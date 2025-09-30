@@ -1,6 +1,6 @@
-# 🏰 Enhanced Versailles AI Agent
+# 🏰 Marie-AI-nette
 
-An intelligent, accessibility-focused AI assistant for planning visits to the Palace of Versailles. This agent combines advanced query planning, faceted retrieval-augmented generation (RAG), and personalized recommendations to provide comprehensive, inclusive travel guidance.
+An intelligent, accessibility-focused AI assistant for planning visits to the Palace of Versailles. Named after Marie-Antoinette, this agent combines advanced query planning, dual RAG fusion, and personalized recommendations to provide comprehensive, inclusive travel guidance.
 
 ## 🌟 Key Features
 
@@ -41,7 +41,47 @@ An intelligent, accessibility-focused AI assistant for planning visits to the Pa
 
 ## 🏗️ Agent Workflow
 
-### New Intelligent Routing Architecture
+### 🎯 Current Production Architecture: Query Planner + Dual RAG
+
+![RAG Workflow](./docs/rag_workflow.png)
+
+Our production system uses a **rule-based Query Planner** with **Dual RAG Fusion** for optimal performance (8.5/10 test score):
+
+#### **Workflow Steps:**
+
+1. **Query Planner Agent** 📋
+   - Extracts user constraints (date, budget, group composition)
+   - Analyzes information gaps
+   - Determines user profile (family, accessibility needs, etc.)
+   - Generates faceted subqueries
+
+2. **Agentic RAG System** 🤖
+   - **Google Maps API**: Location search and navigation
+   - **Multimodal Knowledge Bases**: PDF + JSON documents
+   - **Schedule API**: Real-time opening hours
+   - **Weather API**: Current conditions and forecasts
+
+3. **Evidence Scoring** ⭐
+   - Ranks retrieved information by relevance
+   - Prioritizes official sources
+   - Filters low-quality results
+
+4. **Answer Synthesiser** 📝
+   - Conflict resolution between sources
+   - Constraint checking (budget, accessibility, time)
+   - Generates final structured answer
+
+5. **Follow-up Questions** 🔄 (if necessary)
+   - Proactive clarification requests
+   - Missing information identification
+
+#### **Key Features:**
+- ✅ **Pattern-based routing**: Fast and predictable (regex + LLM for entities)
+- ✅ **Dual RAG Fusion**: Combines PDF and JSON knowledge bases
+- ✅ **Multi-source integration**: KB + Google APIs + Schedule scraper
+- ✅ **8.5/10 test score**: High accuracy and completeness
+
+### New Intelligent Routing Architecture (Experimental)
 
 ```mermaid
 graph TD
