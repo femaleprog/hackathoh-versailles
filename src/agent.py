@@ -41,7 +41,7 @@ class Agent:
         if not api_key:
             raise ValueError("La variable d'environnement MISTRAL_API_KEY est requise.")
 
-        self.llm = MistralAI(model="mistral-large-latest", api_key=api_key)
+        self.llm = MistralAI(model="mistral-medium-latest", api_key=api_key)
 
         self.tools = [
             FunctionTool.from_defaults(
