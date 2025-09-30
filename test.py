@@ -13,6 +13,7 @@ from typing import Dict, List, Tuple
 from datetime import datetime
 from dotenv import load_dotenv
 from llama_index.llms.mistralai import MistralAI
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 
 class LLMJudge:
@@ -26,12 +27,18 @@ class LLMJudge:
 
         self.llm = MistralAI(model="mistral-large-latest", api_key=api_key)
 
+    
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=5, max=15)
+    )
     async def evaluate_response(
         self, question: str, expected_answer: str, actual_answer: str
     ) -> Dict:
         """
-        Evaluate the agent's response using LLM as judge
 
+        Evaluate the agent's response using LLM as judge with retry logic
+        
         Returns:
             Dict with score (0-10), reasoning, and detailed metrics
         """
@@ -139,20 +146,39 @@ class AgentTester:
         with open(self.test_queries_path, "r", encoding="utf-8") as f:
             return json.load(f)
 
+    
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        retry=retry_if_exception_type((httpx.HTTPStatusError, httpx.RequestError))
+    )
+
     async def get_agent_response(self, question: str) -> str:
-        """Get response from agent via API endpoint"""
+        """Get response from agent via API endpoint with retry logic"""
         try:
             async with httpx.AsyncClient(timeout=120.0) as client:
                 # Call evaluate endpoint
                 response = await client.post(
-                    f"{self.api_url}/v1/evaluate", json={"question": question}
+
+                    f"{self.api_url}/chat",
+                    json={
+                        "question": question
+                    }
                 )
 
                 if response.status_code == 200:
                     data = response.json()
                     # Extract answer from EvalCompletionAnswer response
                     answer = data.get("answer", "")
-                    return answer.strip() if answer else "No response generated"
+
+                    if not answer:
+                        print(f"⚠️  Warning: Empty answer received, retrying...")
+                        raise httpx.RequestError("Empty response from API")
+                    return answer.strip()
+                elif response.status_code in [429, 500, 502, 503, 504]:
+                    # Retry on rate limit or server errors
+                    print(f"⚠️  API returned {response.status_code}, retrying...")
+                    response.raise_for_status()
                 else:
                     return f"API Error: {response.status_code} - {response.text}"
 

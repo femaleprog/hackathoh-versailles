@@ -111,6 +111,7 @@ def get_best_route_between_places(places: list[str]):
     """
 
     print("Getting route between places in the given order:", places)
+
     places_with_details = {
         place: json.loads(search_places_in_versailles(place)) for place in places
     }
@@ -171,6 +172,7 @@ def get_best_route_between_places(places: list[str]):
     for i, leg in enumerate(json_response["routes"][0]["legs"]):
         leg["startPlaceDetails"] = ordered_valid_places[i]
         leg["endPlaceDetails"] = ordered_valid_places[i + 1]
+
 
     return json_response
 
