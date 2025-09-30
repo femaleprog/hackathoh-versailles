@@ -1,6 +1,8 @@
-# 🏰 Marie-AI-nette
+# 🏰 Le Scribe Royal
 
-An intelligent, accessibility-focused AI assistant for planning visits to the Palace of Versailles. Named after Marie-Antoinette, this agent combines advanced query planning, dual RAG fusion, and personalized recommendations to provide comprehensive, inclusive travel guidance.
+**Équipe 13 - Marie-AI-nette**
+
+An intelligent, accessibility-focused AI assistant for planning visits to the Palace of Versailles. This royal scribe combines advanced query planning, dual RAG fusion, and personalized recommendations to provide comprehensive, inclusive travel guidance.
 
 ## 🚀 Quick Start
 
