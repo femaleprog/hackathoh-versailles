@@ -68,23 +68,29 @@ class VersaillesVectorStore:
             # Check if collection exists
             if self.weaviate_client.collections.exists(self.collection_name):
                 print(f"Collection {self.collection_name} already exists")
-                # Delete existing collection to start fresh
-                self.weaviate_client.collections.delete(self.collection_name)
-                print(f"Deleted existing collection {self.collection_name}")
-            
-            # Create new collection
-            self.weaviate_client.collections.create(
-                name=self.collection_name,
-                vectorizer_config=Configure.Vectorizer.none(),  # We'll provide our own vectors
-                properties=[
-                    Property(name="content", data_type=DataType.TEXT),
-                    Property(name="url", data_type=DataType.TEXT),
-                    Property(name="title", data_type=DataType.TEXT),
-                    Property(name="section", data_type=DataType.TEXT),
-                ]
-            )
-            
-            print(f"✅ Collection {self.collection_name} created successfully")
+                # Check if it has data
+                collection = self.weaviate_client.collections.get(self.collection_name)
+                total_objects = collection.aggregate.over_all(total_count=True).total_count
+                print(f"Current objects in collection: {total_objects}")
+                
+                if total_objects > 0:
+                    print("Collection has data, skipping recreation")
+                    return
+                else:
+                    print("Collection is empty, will populate it")
+            else:
+                # Create new collection
+                self.weaviate_client.collections.create(
+                    name=self.collection_name,
+                    vectorizer_config=Configure.Vectorizer.none(),  # We'll provide our own vectors
+                    properties=[
+                        Property(name="content", data_type=DataType.TEXT),
+                        Property(name="url", data_type=DataType.TEXT),
+                        Property(name="title", data_type=DataType.TEXT),
+                        Property(name="section", data_type=DataType.TEXT),
+                    ]
+                )
+                print(f"✅ Collection {self.collection_name} created successfully")
             
         except Exception as e:
             print(f"❌ Error setting up collection: {e}")
@@ -275,15 +281,27 @@ def main():
     store = VersaillesVectorStore()
     
     try:
+        # Use the correct path to extracted_texts.md
+        markdown_file = "/Users/yongkangzou/Desktop/Hackathons/Datacraft Hackathon/Versaille Hackathon/extracted_texts.md"
+        
         # Parse chunks from extracted texts
-        chunks = store.parse_markdown_chunks("extracted_texts.md")
+        chunks = store.parse_markdown_chunks(markdown_file)
         
         if not chunks:
             print("No chunks found. Make sure extracted_texts.md exists.")
             return
         
-        # Store chunks as vectors
-        store.store_chunks(chunks)
+        # Check if collection already has data
+        collection = store.weaviate_client.collections.get(store.collection_name)
+        total_objects = collection.aggregate.over_all(total_count=True).total_count
+        
+        if total_objects > 0:
+            print(f"✅ TxtVector collection already has {total_objects} objects")
+            print("Skipping embedding process")
+        else:
+            print("TxtVector collection is empty, proceeding with embedding...")
+            # Store chunks as vectors
+            store.store_chunks(chunks)
         
         # Test search functionality
         test_queries = [

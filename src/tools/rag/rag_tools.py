@@ -8,10 +8,12 @@ import os
 import asyncio
 from typing import Dict, Any, List, Optional
 from .rag_qa_mistral import VersaillesRAGQA
+from .dual_rag_fusion import DualRAGFusion, ask_versailles_dual_rag
 
 
 # Global RAG QA instance
 _rag_qa_instance: Optional[VersaillesRAGQA] = None
+_dual_rag_instance: Optional[DualRAGFusion] = None
 
 
 def get_rag_qa_instance() -> VersaillesRAGQA:
@@ -20,6 +22,14 @@ def get_rag_qa_instance() -> VersaillesRAGQA:
     if _rag_qa_instance is None:
         _rag_qa_instance = VersaillesRAGQA()
     return _rag_qa_instance
+
+
+def get_dual_rag_instance() -> DualRAGFusion:
+    """Get or create the global dual RAG instance."""
+    global _dual_rag_instance
+    if _dual_rag_instance is None:
+        _dual_rag_instance = DualRAGFusion()
+    return _dual_rag_instance
 
 
 def search_versailles_knowledge(question: str, num_sources: int = 3) -> str:
@@ -106,7 +116,26 @@ def get_versailles_context(question: str, max_chunks: int = 5) -> str:
 
 def ask_versailles_expert(question: str) -> str:
     """
-    Ask a question to the Versailles expert system.
+    Ask a question to the Versailles expert system using DUAL RAG FUSION.
+    This function searches both text and PDF collections and fuses results with Mistral AI.
+    
+    Args:
+        question: Question about Versailles (in French or English)
+        
+    Returns:
+        Expert answer fused from both text and PDF sources
+    """
+    try:
+        # Use the new dual RAG fusion system
+        return ask_versailles_dual_rag(question, txt_limit=3, pdf_limit=2)
+            
+    except Exception as e:
+        return f"Erreur du système expert Versailles: {str(e)}"
+
+
+def ask_versailles_expert_legacy(question: str) -> str:
+    """
+    Legacy function - Ask a question to the Versailles expert system (text only).
     This function combines retrieval and generation for comprehensive answers.
     
     Args:
@@ -156,5 +185,21 @@ def versailles_context_tool(question: str, max_chunks: int = 5) -> str:
 
 
 def versailles_expert_tool(question: str) -> str:
-    """Tool function for asking the Versailles expert."""
+    """Tool function for asking the Versailles expert using DUAL RAG FUSION."""
     return ask_versailles_expert(question)
+
+
+def versailles_dual_rag_tool(question: str, txt_limit: int = 3, pdf_limit: int = 2) -> str:
+    """
+    Tool function for dual RAG fusion system.
+    Searches both text and PDF collections and fuses results with Mistral AI.
+    
+    Args:
+        question: Question about Versailles
+        txt_limit: Number of text sources to retrieve
+        pdf_limit: Number of PDF sources to retrieve
+        
+    Returns:
+        Fused answer from both collections
+    """
+    return ask_versailles_dual_rag(question, txt_limit, pdf_limit)
