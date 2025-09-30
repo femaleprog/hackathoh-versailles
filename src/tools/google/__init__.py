@@ -110,6 +110,7 @@ def get_best_route_between_places(places: list[str]):
         requests.exceptions.RequestException: If the API request fails.
     """
 
+    print("Getting best route between places:", places)
     places_with_details = {
         place: json.loads(search_places_in_versailles(place)) for place in places
     }
@@ -144,7 +145,6 @@ def get_best_route_between_places(places: list[str]):
             {"placeId": used_places[place]["id"]} for place in interim_places
         ],
         "travelMode": "WALK",
-        "optimizeWaypointOrder": True,
     }
 
     routes_response = requests.post(
@@ -153,9 +153,9 @@ def get_best_route_between_places(places: list[str]):
 
     json_response = routes_response.json()
 
-    optimized_waypoints = json_response["routes"][0].get(
-        "optimizedIntermediateWaypointIndex"
-    )
+    optimized_waypoints = list(range(len(interim_places)))
+    print(optimized_waypoints, json_response)
+
     optimized_waypoints_names = [interim_places[i] for i in optimized_waypoints]
     sublegs = [(starting_place, optimized_waypoints_names[0])]
     for i in range(len(optimized_waypoints_names) - 1):
