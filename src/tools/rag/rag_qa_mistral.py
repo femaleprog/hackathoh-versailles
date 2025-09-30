@@ -3,14 +3,15 @@
 RAG-powered QA system using Mistral AI and Weaviate
 """
 
-import os
 import json
-from typing import List, Dict, Any
-from dotenv import load_dotenv
-from sentence_transformers import SentenceTransformer
+import os
+from typing import Any, Dict, List
+
 import weaviate
-from weaviate.classes.init import Auth
+from dotenv import load_dotenv
 from mistralai import Mistral
+from sentence_transformers import SentenceTransformer
+from weaviate.classes.init import Auth
 
 # Load environment variables
 load_dotenv()
@@ -134,10 +135,10 @@ class VersaillesRAGQA:
                 context_parts.append(
                     f"""
 Source {i}:
-Title: {chunk['title']}
-Section: {chunk['section']}
-URL: {chunk['url']}
-Content: {chunk['content']}
+Title: {chunk["title"]}
+Section: {chunk["section"]}
+URL: {chunk["url"]}
+Content: {chunk["content"]}
 """
                 )
 
@@ -167,7 +168,7 @@ Réponse:"""
             ]
 
             response = self.mistral_client.chat.complete(
-                model="mistral-medium-latest",
+                model="mistral-large-latest",
                 messages=messages,
                 temperature=0.1,
                 max_tokens=10000,
