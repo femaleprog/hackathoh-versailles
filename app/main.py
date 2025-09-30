@@ -206,3 +206,11 @@ async def quantitative_eval_route(payload: EvalCompletionRequest, request: Reque
         raise HTTPException(
             status_code=500, detail=f"Erreur interne du proxy: {str(e)}"
         )
+
+
+@app.post("/chat")
+async def chat_redirect(payload: EvalCompletionRequest, request: Request):
+    """
+    Redirect to the evaluate endpoint
+    """
+    return await quantitative_eval_route(payload, request)

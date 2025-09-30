@@ -141,7 +141,7 @@ class AgentTester:
             async with httpx.AsyncClient(timeout=120.0) as client:
                 # Call evaluate endpoint
                 response = await client.post(
-                    f"{self.api_url}/v1/evaluate",
+                    f"{self.api_url}/chat",
                     json={
                         "question": question
                     }
@@ -337,7 +337,7 @@ async def main():
     tester = AgentTester()
     
     # Run all tests (or limit to first N tests for quick testing)
-    await tester.run_all_tests()  # Test first 2 queries for quick validation
+    await tester.run_all_tests(limit=2)  # Test first 2 queries for quick validation
     # await tester.run_all_tests()  # Test all queries
     
     print("\n✅ All tests completed!")
