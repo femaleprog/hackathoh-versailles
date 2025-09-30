@@ -20,6 +20,11 @@ from llama_index.llms.mistralai import MistralAI
 # Import tools
 from src.tools.rag import versailles_expert_tool
 from src.tools.schedule_scraper import scrape_versailles_schedule
+from src.tools.google import (
+    search_places_in_versailles,
+    get_best_route_between_places,
+    get_weather_in_versailles
+)
 
 
 def sum_numbers(a: int, b: int) -> int:
@@ -58,6 +63,21 @@ class Agent:
                 fn=scrape_versailles_schedule,
                 name="get_versailles_schedule",
                 description="Retrieves the opening hours, visitor numbers and schedule for the Palace of Versailles and its estate for a specific date. The input must be a date string in 'YYYY-MM-DD' format.",
+            ),
+            FunctionTool.from_defaults(
+                fn=search_places_in_versailles,
+                name="search_places_versailles",
+                description="Search for specific places, buildings, or locations within Versailles using Google Places API. Returns place name, address, and place ID. Automatically adds 'Versailles' to the search query.",
+            ),
+            FunctionTool.from_defaults(
+                fn=get_best_route_between_places,
+                name="get_walking_route",
+                description="Calculate the optimal walking route between multiple places in Versailles. Takes a list of place names and returns the best route with duration, distance, and detailed walking directions.",
+            ),
+            FunctionTool.from_defaults(
+                fn=get_weather_in_versailles,
+                name="get_versailles_weather",
+                description="Get weather forecast for Versailles. Takes the number of days (1-7) and returns detailed weather information including temperature, conditions, and precipitation.",
             ),
         ]
 
