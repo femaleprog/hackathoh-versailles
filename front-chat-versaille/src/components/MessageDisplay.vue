@@ -6,15 +6,23 @@
       class="message-wrapper"
       :class="message.sender"
     >
-      <div class="message-bubble" v-html="renderMarkdown(message.text)"></div>
+      <div class="message-bubble">
+        <div
+          v-if="message.sender === 'bot' && !message.text"
+          class="thinking-indicator"
+        >
+          Thinking...
+        </div>
+        <div v-else v-html="renderMarkdown(message.text)"></div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { nextTick, ref, watch } from "vue";
-import { marked } from "marked"; // Import the marked library
-import DOMPurify from "dompurify"; // Import DOMPurify for security
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 export default {
   name: "MessageDisplay",
@@ -38,6 +46,7 @@ export default {
     );
 
     const renderMarkdown = (text) => {
+      if (!text) return ""; // Ensure text is not null/undefined
       const rawHtml = marked.parse(text);
       const sanitizedHtml = DOMPurify.sanitize(rawHtml);
       return sanitizedHtml;
@@ -95,6 +104,22 @@ export default {
   background-color: #ffffff;
   color: var(--text-primary);
   border: 1px solid var(--border-light);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.thinking-indicator {
+  color: #888;
+  font-style: italic;
+  animation: pulse 1.5s infinite;
 }
 
 .message-bubble :deep(p) {
