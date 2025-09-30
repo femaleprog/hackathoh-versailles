@@ -160,19 +160,22 @@ const handleNewMessage = async (newMessageText) => {
     messages.value.push({ id: botMessageId, text: "", sender: "bot" });
     const currentBotMessage = messages.value.find((m) => m.id === botMessageId);
 
-    const response = await fetch(`${backendApiUrl}/v1/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "mistral-medium-2508",
-        messages: apiMessages,
-        stream: true,
-      }),
-    });
+    const response = await fetch(
+      `${backendApiUrl}/v1/chat_interface/completions`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "mistral-medium-2508",
+          messages: apiMessages,
+          stream: true,
+        }),
+      }
+    );
 
     if (!response.ok)
       throw new Error(`API request failed with status ${response.status}`);

@@ -13,7 +13,7 @@ const routes = [
   },
   {
     // The chat view now accepts a dynamic UUID in the URL
-    path: "/chat/:uuid",
+    path: "/chat_interface/:uuid",
     name: "Chat",
     component: ChatView,
     props: true, // Pass route params as props to the component

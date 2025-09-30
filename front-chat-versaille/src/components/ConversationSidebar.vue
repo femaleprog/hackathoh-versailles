@@ -3,7 +3,10 @@
     <h2>Mes Conversations</h2>
     <ul>
       <li v-for="conv in conversations" :key="conv.uuid">
-        <RouterLink :to="`/chat/${conv.uuid}`" class="conversation-link">
+        <RouterLink
+          :to="`/chat_interface/${conv.uuid}`"
+          class="conversation-link"
+        >
           {{ conv.title }}
         </RouterLink>
       </li>
