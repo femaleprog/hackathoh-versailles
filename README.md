@@ -44,8 +44,8 @@ uv run python app/main.py
 The API will be available at `http://localhost:8000`
 
 **API Endpoints:**
-- `POST /v1/chat/completions` - OpenAI-compatible chat endpoint
-- `POST /v1/evaluate` - Evaluation endpoint for testing
+- `POST /` - Chat UI endpoint
+- `POST /chat` - Quantitative evaluation endpoint for testing
 
 ### Testing
 
