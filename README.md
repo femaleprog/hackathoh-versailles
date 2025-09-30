@@ -2,6 +2,58 @@
 
 An intelligent, accessibility-focused AI assistant for planning visits to the Palace of Versailles. Named after Marie-Antoinette, this agent combines advanced query planning, dual RAG fusion, and personalized recommendations to provide comprehensive, inclusive travel guidance.
 
+## 🚀 Quick Start
+
+### Prerequisites
+
+You'll need the following API keys:
+
+```bash
+MISTRAL_API_KEY=your_mistral_api_key
+GOOGLE_API_KEY=your_google_maps_api_key
+WEAVIATE_URL=your_weaviate_cluster_url
+WEAVIATE_API_KEY=your_weaviate_api_key
+```
+
+### Installation
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/dorianlagadec/hackathoh-versailles.git
+cd hackathoh-versailles
+```
+
+2. **Create `.env` file** with your API keys
+```bash
+cp .env.example .env
+# Edit .env and add your API keys
+```
+
+3. **Install dependencies** (using [uv](https://github.com/astral-sh/uv))
+```bash
+uv sync
+```
+
+### Running the Application
+
+**Start the API server:**
+```bash
+uv run python app/main.py
+```
+
+The API will be available at `http://localhost:8000`
+
+**API Endpoints:**
+- `POST /v1/chat/completions` - OpenAI-compatible chat endpoint
+- `POST /v1/evaluate` - Evaluation endpoint for testing
+
+### Testing
+
+Run the test suite with LLM-as-a-Judge evaluation:
+```bash
+uv run python test.py
+```
+
 ## 🌟 Key Features
 
 ### 🎯 **Intelligent Query Routing & Tool Orchestration**
