@@ -171,8 +171,12 @@ async def quantitative_eval_route(payload: EvalCompletionRequest, request: Reque
     query = payload.question
 
     try:
-        response = await agent.chat_completion_non_stream(query=query)
-        answer = response["choices"][0]["message"]["content"]
+        # Use Query Planner for complete response with tool integration
+        planner_response = await agent.chat_completion_with_planner(query=query)
+        answer = planner_response.get("final_answer", "")
+        
+        if not answer:
+            raise ValueError("No answer generated from agent")
 
         return EvalCompletionAnswer(answer=answer)
 
