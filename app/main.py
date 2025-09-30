@@ -50,6 +50,7 @@ app = FastAPI(title="Proxy Mistral API (OpenAI-like)", lifespan=lifespan)
 origins = [
     "http://localhost:5173",  # Default Vue dev server port
     "http://127.0.0.1:5173",
+    "https://hackversailles-13-deus.ngrok.app",
     # Add any other origins you need
 ]
 
@@ -113,7 +114,7 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
             try:
                 planner_response = await agent.chat_completion_with_planner(query=query)
                 print(f"Query Planner Response: {planner_response}")
-                
+
                 response_content = planner_response["final_answer"]
                 final_response = {
                     "id": f"cmpl-{int(time.time())}",
@@ -137,10 +138,12 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
                     },
                     "query_analysis": planner_response.get("analysis", {}),
                     "tools_used": list(planner_response.get("tool_results", {}).keys()),
-                    "processing_method": planner_response.get("processing_method", "query_planner")
+                    "processing_method": planner_response.get(
+                        "processing_method", "query_planner"
+                    ),
                 }
                 return JSONResponse(content=final_response, status_code=200)
-            
+
             except Exception as planner_error:
                 print(f"Query Planner failed: {planner_error}")
                 # Fallback to original method
@@ -168,7 +171,7 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
                         "total_tokens": 0,
                     },
                     "processing_method": "fallback",
-                    "planner_error": str(planner_error)
+                    "planner_error": str(planner_error),
                 }
                 return JSONResponse(content=final_response, status_code=200)
 
@@ -197,7 +200,7 @@ async def quantitative_eval_route(payload: EvalCompletionRequest, request: Reque
         # Use Query Planner for complete response with tool integration
         planner_response = await agent.chat_completion_with_planner(query=query)
         answer = planner_response.get("final_answer", "")
-        
+
         if not answer:
             raise ValueError("No answer generated from agent")
 
