@@ -139,23 +139,19 @@ class AgentTester:
         """Get response from agent via API endpoint"""
         try:
             async with httpx.AsyncClient(timeout=120.0) as client:
-                # Call chat completion endpoint
+                # Call evaluate endpoint
                 response = await client.post(
-                    f"{self.api_url}/v1/chat/completions",
+                    f"{self.api_url}/v1/evaluate",
                     json={
-                        "model": "mistral-medium-latest",
-                        "messages": [
-                            {"role": "user", "content": question}
-                        ],
-                        "stream": False
+                        "question": question
                     }
                 )
                 
                 if response.status_code == 200:
                     data = response.json()
-                    # Extract content from response
-                    content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
-                    return content.strip() if content else "No response generated"
+                    # Extract answer from EvalCompletionAnswer response
+                    answer = data.get("answer", "")
+                    return answer.strip() if answer else "No response generated"
                 else:
                     return f"API Error: {response.status_code} - {response.text}"
                     
