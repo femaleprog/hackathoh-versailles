@@ -25,6 +25,7 @@ from src.tools.google import (
     get_best_route_between_places,
     get_weather_in_versailles
 )
+from src.query_planner import QueryPlanner
 
 
 def sum_numbers(a: int, b: int) -> int:
@@ -47,6 +48,9 @@ class Agent:
             raise ValueError("La variable d'environnement MISTRAL_API_KEY est requise.")
 
         self.llm = MistralAI(model="mistral-medium-latest", api_key=api_key)
+        
+        # Initialize Query Planner
+        self.query_planner = QueryPlanner()
 
         self.tools = [
             FunctionTool.from_defaults(
@@ -146,6 +150,49 @@ class Agent:
                     yield self._format_chunk(event.delta)
         except Exception as e:
             raise e
+
+    async def chat_completion_with_planner(self, query: str) -> Dict[str, Any]:
+        """
+        Process query using the Query Planner for intelligent tool coordination
+        
+        Args:
+            query: User's query string
+            
+        Returns:
+            Dictionary containing analysis, tool results, and final answer
+        """
+        try:
+            # Use Query Planner to process the query
+            analysis, tool_results, final_answer = await self.query_planner.process_query(query)
+            
+            return {
+                "analysis": {
+                    "query_type": analysis.query_type.value,
+                    "confidence": analysis.confidence,
+                    "required_tools": analysis.required_tools,
+                    "entities": analysis.extracted_entities,
+                    "reasoning": analysis.reasoning
+                },
+                "tool_results": {
+                    name: {
+                        "success": result.success,
+                        "data": result.data,
+                        "error": result.error
+                    } for name, result in tool_results.items()
+                },
+                "final_answer": final_answer,
+                "processing_method": "query_planner"
+            }
+        except Exception as e:
+            # Fallback to original method if planner fails
+            print(f"Query Planner failed, falling back to original method: {e}")
+            fallback_response = await self.chat_completion_non_stream(query)
+            return {
+                "analysis": {"error": str(e)},
+                "tool_results": {},
+                "final_answer": fallback_response.get("choices", [{}])[0].get("message", {}).get("content", "Error processing query"),
+                "processing_method": "fallback"
+            }
 
     async def chat_completion_non_stream(self, query: str) -> str:
         """Traite une requête en mode non-stream."""
