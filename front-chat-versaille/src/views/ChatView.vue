@@ -4,8 +4,8 @@
       <header class="chat-header">
         <h1>Le Scribe Royal</h1>
         <p>Votre humble serviteur digital</p>
-        <button @click="clearChat" class="clear-chat-btn">
-          Effacer la Conversation
+        <button @click="newConversation" class="new-chat-btn">
+          Nouvelle Conversation
         </button>
         <button @click="toggleMap" class="map-toggle-btn">
           {{ isMapOpen ? "Fermer la Carte" : "Ouvrir la Carte" }}
@@ -21,7 +21,6 @@
         :route-data="routeJson"
         :selected-leg-index="selectedLegIndex"
       />
-
       <div class="leg-details" v-if="currentLegDetails">
         <p>
           <span class="location-start">{{ currentLegDetails.start }}</span>
@@ -43,177 +42,209 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import MessageDisplay from "@/components/MessageDisplay.vue";
 import UserInput from "@/components/UserInput.vue";
 import MapDisplay from "@/components/MapDisplay.vue";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
+import { useRouter } from "vue-router";
 import routeJsonData from "@/route-data.json";
 
-export default {
-  name: "ChatView",
-  components: {
-    MessageDisplay,
-    UserInput,
-    MapDisplay,
+const emit = defineEmits(["conversation-updated"]);
+
+// --- Props and Router ---
+const props = defineProps({
+  uuid: {
+    type: String,
+    required: true,
   },
-  setup() {
-    const isMapOpen = ref(false);
-    const routeJson = ref(routeJsonData);
-    const selectedLegIndex = ref(0);
-    const messages = ref([]);
+});
+const router = useRouter();
 
-    const selectLeg = (index) => {
-      selectedLegIndex.value = index;
-    };
+// --- Reactive State ---
+const isMapOpen = ref(false);
+const routeJson = ref(routeJsonData);
+const selectedLegIndex = ref(0);
+const messages = ref([]);
 
-    const toggleMap = () => {
-      isMapOpen.value = !isMapOpen.value;
-    };
+const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
+const backendApiUrl = "http://localhost:8000";
 
-    const clearChat = () => {
-      messages.value = [];
-    };
+// --- Functions ---
+const selectLeg = (index) => {
+  selectedLegIndex.value = index;
+};
 
-    const currentLegDetails = computed(() => {
-      const leg = routeJson.value?.routes?.[0]?.legs?.[selectedLegIndex.value];
-      if (!leg) return null;
+const toggleMap = () => {
+  isMapOpen.value = !isMapOpen.value;
+};
 
-      return {
-        start: leg.startPlaceDetails,
-        end: leg.endPlaceDetails,
-      };
+const newConversation = () => {
+  router.push("/");
+};
+
+const currentLegDetails = computed(() => {
+  const leg = routeJson.value?.routes?.[0]?.legs?.[selectedLegIndex.value];
+  if (!leg) return null;
+  return {
+    start: leg.startPlaceDetails,
+    end: leg.endPlaceDetails,
+  };
+});
+
+// --- Conversation Memory Functions ---
+const loadConversation = async () => {
+  messages.value = [];
+  try {
+    const response = await fetch(
+      `${backendApiUrl}/v1/conversations/${props.uuid}`
+    );
+    if (response.ok) {
+      const history = await response.json();
+      messages.value = history.map((msg) => ({
+        id: Date.now() + Math.random(),
+        text: msg.content,
+        sender: msg.role === "assistant" ? "bot" : "user",
+      }));
+    } else if (response.status !== 404) {
+      console.error("Failed to load conversation:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error fetching conversation:", error);
+  }
+};
+
+const saveConversation = async () => {
+  if (messages.value.length === 0) return;
+  const payload = messages.value.map((msg) => ({
+    role: msg.sender === "bot" ? "assistant" : "user",
+    content: msg.text,
+  }));
+  try {
+    await fetch(`${backendApiUrl}/v1/conversations/${props.uuid}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+  } catch (error) {
+    console.error("Failed to save conversation:", error);
+  }
+};
+
+const handleNewMessage = async (newMessageText) => {
+  messages.value.push({
+    id: Date.now(),
+    text: newMessageText,
+    sender: "user",
+  });
+
+  if (!apiKey) {
+    messages.value.push({
+      id: Date.now() + 1,
+      text: "Hélas, la clé API de Mistral n'est pas configurée côté client.",
+      sender: "bot",
+    });
+    // --- MODIFIED ---
+    // Save and update even if there's a client-side error
+    await saveConversation();
+    emit("conversation-updated");
+    return;
+  }
+
+  const apiMessages = messages.value.map((msg) => ({
+    role: msg.sender === "bot" ? "assistant" : "user",
+    content: msg.text,
+  }));
+  const botMessageId = Date.now() + 1;
+
+  try {
+    messages.value.push({ id: botMessageId, text: "", sender: "bot" });
+    const currentBotMessage = messages.value.find((m) => m.id === botMessageId);
+
+    const response = await fetch(`${backendApiUrl}/v1/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "mistral-medium-2508",
+        messages: apiMessages,
+        stream: true,
+      }),
     });
 
-    const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
-    // const mistralApiUrl = "https://api.mistral.ai/v1/chat/completions";
-    const mistralApiUrl = "http://localhost:8000/v1/chat/completions";
+    if (!response.ok)
+      throw new Error(`API request failed with status ${response.status}`);
 
-    const handleNewMessage = async (newMessageText) => {
-      // 1. Add user message to the UI
-      messages.value.push({
-        id: Date.now(),
-        text: newMessageText,
-        sender: "user",
-      });
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
 
-      if (!apiKey) {
-        messages.value.push({
-          id: Date.now() + 1,
-          text: "Hélas, la clé API de Mistral n'est pas configurée côté client.",
-          sender: "bot",
-        });
-        return;
-      }
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
 
-      // 2. Prepare the full conversation history for the API
-      const apiMessages = messages.value.map((msg) => ({
-        role: msg.sender === "bot" ? "assistant" : "user",
-        content: msg.text,
-      }));
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split("\n\n");
 
-      try {
-        const response = await fetch(mistralApiUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify({
-            model: "mistral-medium-2508",
-            messages: apiMessages, // Send the entire history
-            stream: true, // Enable streaming
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`API request failed with status ${response.status}`);
-        }
-
-        // 3. Handle the streaming response
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-
-        // Add a new, empty bot message to the UI
-        const botMessageId = Date.now() + 1;
-        messages.value.push({
-          id: botMessageId,
-          text: "",
-          sender: "bot",
-        });
-
-        // Find the message we just added to append chunks to it
-        const currentBotMessage = messages.value.find(
-          (m) => m.id === botMessageId
-        );
-
-        // Read the stream
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunk = decoder.decode(value, { stream: true });
-
-          const lines = chunk.split("\n\n");
-
-          for (const line of lines) {
-            if (line.startsWith("data: ")) {
-              const data = line.substring(6);
-              if (data.trim() === "[DONE]") {
-                return; // Stream finished
-              }
-              try {
-                const parsed = JSON.parse(data);
-                const content = parsed.choices[0]?.delta?.content;
-                if (content && currentBotMessage) {
-                  currentBotMessage.text += content;
-                }
-              } catch (e) {
-                console.error("Could not parse stream chunk:", data, e);
-              }
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          const data = line.substring(6);
+          if (data.trim() === "[DONE]") continue; // Use continue to process other lines in chunk
+          try {
+            const parsed = JSON.parse(data);
+            const content = parsed.choices[0]?.delta?.content;
+            if (content && currentBotMessage) {
+              currentBotMessage.text += content;
             }
+          } catch (e) {
+            console.error("Could not parse stream chunk:", data, e);
           }
         }
-      } catch (error) {
-        console.error("Error calling Mistral API:", error);
-        messages.value.push({
-          id: Date.now() + 1,
-          text: "Hélas, une erreur est survenue lors de la communication avec le Scribe. Veuillez réessayer.",
-          sender: "bot",
-        });
       }
-    };
-
-    return {
-      messages,
-      handleNewMessage,
-      clearChat, // Expose the new function
-      routeJson,
-      selectedLegIndex,
-      selectLeg,
-      isMapOpen,
-      toggleMap,
-      currentLegDetails,
-    };
-  },
+    }
+  } catch (error) {
+    console.error("Error calling Mistral API:", error);
+    const errorBotMessage = messages.value.find((m) => m.id === botMessageId);
+    if (errorBotMessage) {
+      errorBotMessage.text =
+        "Hélas, une erreur est survenue lors de la communication avec le Scribe. Veuillez réessayer.";
+    }
+  } finally {
+    // --- ADDED ---
+    // This block runs after the try/catch is complete, ensuring a predictable order.
+    // 1. Save the final state of the conversation.
+    await saveConversation();
+    // 2. Then, tell the sidebar to refresh.
+    emit("conversation-updated");
+  }
 };
+
+// --- REMOVED ---
+// We no longer need the automatic watcher. Saving is now handled explicitly.
+// watch(messages, saveConversation, { deep: true });
+
+onMounted(() => {
+  loadConversation();
+});
+watch(() => props.uuid, loadConversation);
 </script>
 
 <style scoped>
-/* --- Versailles Color Palette --- */
+/* ... styles remain unchanged ... */
 :root {
   --background-main: #f8f5ed;
   --text-primary: #3a3a3a;
   --color-gold: #b38e55;
   --color-dark-blue: #0a192f;
   --border-light: #e0d8c5;
-  --color-danger: #d9534f; /* Added a danger color for the clear button */
 }
 
 .main-layout-container {
   display: flex;
   height: 100vh;
+  width: 100%;
   max-width: 900px;
   margin: 0 auto;
   border-left: 1px solid var(--border-light);
@@ -224,13 +255,13 @@ export default {
 }
 
 .main-layout-container.map-is-open {
-  max-width: 100vw;
+  max-width: 100%;
   border-left: none;
   border-right: none;
 }
 
 #chat-container {
-  flex: 1 1 auto; /* Allow chat to grow and shrink */
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -260,7 +291,7 @@ export default {
 }
 
 .chat-header {
-  position: relative; /* Needed for positioning the toggle button */
+  position: relative;
   padding: 20px;
   background-color: #fff;
   color: var(--text-primary);
@@ -284,48 +315,33 @@ export default {
   opacity: 0.7;
 }
 
+.map-toggle-btn,
+.new-chat-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 8px 16px;
+  font-family: "Source Serif Pro", serif;
+  font-weight: 600;
+  border: 1px solid var(--border-light);
+  background-color: white;
+  color: var(--text-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
 .map-toggle-btn {
-  position: absolute;
-  top: 50%;
   right: 20px;
-  transform: translateY(-50%);
-  padding: 8px 16px;
-  font-family: "Source Serif Pro", serif;
-  font-weight: 600;
-  border: 1px solid var(--border-light);
-  background-color: white;
-  color: var(--text-primary);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-.map-toggle-btn:hover {
-  background-color: var(--color-gold);
-  border-color: var(--color-gold);
-  color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.clear-chat-btn {
-  position: absolute;
-  top: 50%;
+.new-chat-btn {
   left: 20px;
-  transform: translateY(-50%);
-  padding: 8px 16px;
-  font-family: "Source Serif Pro", serif;
-  font-weight: 600;
-  border: 1px solid var(--border-light);
-  background-color: white;
-  color: var(--text-primary);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-.clear-chat-btn:hover {
+.map-toggle-btn:hover,
+.new-chat-btn:hover {
   background-color: var(--color-gold);
   border-color: var(--color-gold);
   color: white;

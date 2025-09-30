@@ -1,0 +1,22 @@
+{
+  "06a53a8f-4b74-4d36-8971-1cdd9296e70e": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Hey"
+      },
+      {
+        "role": "assistant",
+        "content": "Hélas, une erreur est survenue lors de la communication avec le Scribe. Veuillez réessayer."
+      },
+      {
+        "role": "user",
+        "content": "re"
+      },
+      {
+        "role": "assistant",
+        "content": "Hélas, une erreur est survenue lors de la communication avec le Scribe. Veuillez réessayer."
+      }
+    ]
+  }
+}

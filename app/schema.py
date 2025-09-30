@@ -32,13 +32,21 @@ class EvalCompletionAnswer(BaseModel):
 # RAG-related schemas
 class DocumentUploadRequest(BaseModel):
     texts: List[str] = Field(..., description="List of text content to index")
-    metadata: Optional[List[Dict[str, Any]]] = Field(None, description="Optional metadata for each text")
+    metadata: Optional[List[Dict[str, Any]]] = Field(
+        None, description="Optional metadata for each text"
+    )
 
 
 class QueryRequest(BaseModel):
-    question: str = Field(..., description="Question to ask about the indexed documents")
-    top_k: Optional[int] = Field(5, description="Number of top similar documents to retrieve")
-    similarity_threshold: Optional[float] = Field(0.7, description="Minimum similarity threshold for results")
+    question: str = Field(
+        ..., description="Question to ask about the indexed documents"
+    )
+    top_k: Optional[int] = Field(
+        5, description="Number of top similar documents to retrieve"
+    )
+    similarity_threshold: Optional[float] = Field(
+        0.7, description="Minimum similarity threshold for results"
+    )
 
 
 class QueryResponse(BaseModel):
@@ -61,3 +69,7 @@ class CollectionInfoResponse(BaseModel):
     points_count: Optional[int] = None
     vectors_count: Optional[int] = None
     message: Optional[str] = None
+
+
+class Conversation(BaseModel):
+    messages: List[ChatMessage]
