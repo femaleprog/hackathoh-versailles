@@ -21,6 +21,7 @@ from app.schema import (
 )
 from src.agent import Agent
 from src.prompts import load_prompts
+from fastapi.responses import RedirectResponse
 
 load_dotenv()
 
@@ -63,7 +64,7 @@ app.add_middleware(
 
 @app.get("/")
 def root():
-    return "Versailles Chatbot"
+    return RedirectResponse(url="http://localhost:5173")
 
 
 @app.post("/v1/chat/completions")
