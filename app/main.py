@@ -65,7 +65,7 @@ app.add_middleware(
 
 @app.get("/")
 def root():
-    return RedirectResponse(url="http://localhost:5173")
+    return "Bienvenue au Proxy Mistral API. Utilisez /v1/chat/completions pour les requêtes de chat."
 
 
 @app.post("/v1/chat/completions")

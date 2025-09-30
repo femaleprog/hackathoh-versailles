@@ -68,7 +68,10 @@ const selectedLegIndex = ref(0);
 const messages = ref([]);
 
 const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
-const backendApiUrl = "http://localhost:8000";
+// --- CHANGE ---
+// Using a relative path for the API. Nginx will proxy any request starting with /api/
+// to the backend service defined in your nginx.conf.
+const backendApiUrl = "https://hackversailles-13-deus.ngrok.app/api";
 
 // --- Functions ---
 const selectLeg = (index) => {
@@ -96,6 +99,7 @@ const currentLegDetails = computed(() => {
 const loadConversation = async () => {
   messages.value = [];
   try {
+    // This will now correctly resolve to https://<your-ngrok-url>/api/v1/conversations/...
     const response = await fetch(
       `${backendApiUrl}/v1/conversations/${props.uuid}`
     );
@@ -160,22 +164,19 @@ const handleNewMessage = async (newMessageText) => {
     messages.value.push({ id: botMessageId, text: "", sender: "bot" });
     const currentBotMessage = messages.value.find((m) => m.id === botMessageId);
 
-    const response = await fetch(
-      `${backendApiUrl}/v1/chat_interface/completions`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: "mistral-medium-2508",
-          messages: apiMessages,
-          stream: true,
-        }),
-      }
-    );
+    const response = await fetch(`${backendApiUrl}/v1/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "mistral-medium-2508",
+        messages: apiMessages,
+        stream: true,
+      }),
+    });
 
     if (!response.ok)
       throw new Error(`API request failed with status ${response.status}`);

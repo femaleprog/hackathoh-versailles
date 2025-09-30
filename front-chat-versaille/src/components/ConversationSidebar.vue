@@ -19,7 +19,7 @@ import { ref, onMounted } from "vue";
 import { RouterLink } from "vue-router";
 
 const conversations = ref([]);
-const backendApiUrl = "http://localhost:8000";
+const backendApiUrl = "https://hackversailles-13-deus.ngrok.app/api";
 
 /**
  * Fetches the list of conversations from the backend.
