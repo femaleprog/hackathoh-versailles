@@ -154,7 +154,9 @@ class Agent:
         return response
 
     # @observe(name="chat_completion_stream")
-    async def _internal_streamer(self, query) -> AsyncGenerator[str, None]:
+    async def _internal_streamer(
+        self, query, chat_history
+    ) -> AsyncGenerator[str, None]:
         """Gestionnaire de streaming interne avec trace Langfuse et logging."""
         logger.info(
             f"Entering _internal_streamer for session {self.session_id} with query: '{query}'"
@@ -173,7 +175,7 @@ class Agent:
         try:
             self.found_places = []
 
-            handler = self.agent.run(query)
+            handler = self.agent.run(query, chat_history=chat_history)
             event_count = 0
             async for event in handler.stream_events():
                 event_count += 1
@@ -420,7 +422,7 @@ class Agent:
 
         return response
 
-    def chat_completion_stream(self, query: str) -> AsyncGenerator:
+    def chat_completion_stream(self, query: str, chat_history) -> AsyncGenerator:
         """Traite une requête en mode stream."""
         logger.debug(f"Creating stream generator for query: '{query}'")
-        return self._internal_streamer(query)
+        return self._internal_streamer(query, chat_history=chat_history)

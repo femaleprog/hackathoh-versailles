@@ -7,17 +7,19 @@ from typing import List
 
 import httpx
 from dotenv import load_dotenv
+from fastapi import Body, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, HTTPException, Request, Body
 from fastapi.responses import JSONResponse, StreamingResponse
+from llama_index.core.llms import ChatMessage as LlamaIndexChatMessage
+from llama_index.core.llms import MessageRole
 
 # Make sure to reference the new schema location
 from app.schema import (
     ChatCompletionRequest,
-    EvalCompletionAnswer,
-    EvalCompletionRequest,
     ChatMessage,  # Import ChatMessage
     Conversation,  # Import new Conversation schema
+    EvalCompletionAnswer,
+    EvalCompletionRequest,
 )
 from src.agent import Agent
 from src.prompts import load_prompts
@@ -88,13 +90,31 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
 
     try:
         query = payload.messages[-1].content
+        chat_history_objects = payload.messages[:-1]
+
+        # Convertir en une liste d'objets LlamaIndexChatMessage
+        try:
+            chat_history_for_llamaindex = [
+                LlamaIndexChatMessage(
+                    role=MessageRole(
+                        msg.role
+                    ),  # Convertit le str ("user", "assistant") en Enum
+                    content=msg.content,
+                )
+                for msg in chat_history_objects
+            ]
+        except ValueError as e:
+            # Gérer le cas où le rôle n'est pas valide (par ex. "system" si non supporté)
+            print(f"Erreur lors de la conversion du rôle de message : {e}")
         print(f"Session {session_id}: {query}")
     except (AttributeError, IndexError, TypeError):
         raise HTTPException(status_code=400, detail="Payload de messages invalide.")
 
     try:
         if payload.stream:
-            final_generator = agent.chat_completion_stream(query=query)
+            final_generator = agent.chat_completion_stream(
+                query=query, chat_history=chat_history_for_llamaindex
+            )
             return StreamingResponse(final_generator, media_type="text/event-stream")
         else:
             # Non-streaming logic remains the same
