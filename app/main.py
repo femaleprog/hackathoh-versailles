@@ -112,6 +112,7 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
                         "completion_tokens": 0,
                         "total_tokens": 0,
                     },
+                    "walking_route": response["walking_route"],
                     # "query_analysis": planner_response.get("analysis", {}),
                     # "tools_used": list(planner_response.get("tool_results", {}).keys()),
                     # "processing_method": planner_response.get(

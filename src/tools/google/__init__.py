@@ -1,13 +1,12 @@
-import os
-import requests
+import json
 import logging
+import os
+from typing import List, Literal, Optional
 
-from pydantic import BaseModel, Field
-from typing import Optional, List
-from typing import Literal
-from langfuse import Langfuse, observe
-
+import requests
 from dotenv import load_dotenv
+from langfuse import Langfuse, observe
+from pydantic import BaseModel, Field
 
 load_dotenv()
 
@@ -74,7 +73,7 @@ def search_places_in_versailles(
         final_answer["warning"] = (
             "Multiple results found, returning the first one. Handle with care"
         )
-    return final_answer
+    return json.dumps(final_answer)
 
 
 class RouteToolParams(BaseModel):
@@ -112,7 +111,7 @@ def get_best_route_between_places(places: list[str]):
     """
 
     places_with_details = {
-        place: search_places_in_versailles(place) for place in places
+        place: json.loads(search_places_in_versailles(place)) for place in places
     }
 
     used_places = {k: v for k, v in places_with_details.items() if "warning" not in v}
@@ -172,7 +171,6 @@ def get_best_route_between_places(places: list[str]):
 
 @observe(name="get_weather_in_versailles")
 def get_weather_in_versailles(n_days: int):
-
     # Google Weather API endpoint for Versailles
     url = "https://weather.googleapis.com/v1/forecast/days:lookup"
 
@@ -189,7 +187,6 @@ def get_weather_in_versailles(n_days: int):
 
 
 if __name__ == "__main__":
-
     ALL_PLACES = [
         "La Grande Écurie",
         "La Petite Écurie",

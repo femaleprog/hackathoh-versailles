@@ -34,7 +34,7 @@ from src.utils import get_langfuse
 # --- Configuration du logging ---
 # Mettez le level à logging.DEBUG pour tout voir, ou logging.INFO pour moins de détails
 logging.basicConfig(
-    level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 # --------------------------------
@@ -68,61 +68,51 @@ class Agent:
             logger.error("MISTRAL_API_KEY environment variable not found.")
             raise ValueError("La variable d'environnement MISTRAL_API_KEY est requise.")
 
-        self.llm = MistralAI(model="mistral-large-latest", api_key=api_key)
+        self.llm = MistralAI(
+            model="mistral-large-latest", api_key=api_key, max_tokens=120000
+        )
         logger.info(f"MistralAI LLM initialized with model: {self.llm.model}")
 
         # Initialize Query Planner
-        self.query_planner = QueryPlanner()
-        logger.info("QueryPlanner initialized.")
-
+        # self.query_planner = QueryPlanner()
+        # logger.info("QueryPlanner initialized.")
+        self.found_places = []
         self.tools = [
             # ... (les définitions de vos outils restent inchangées) ...
             FunctionTool.from_defaults(
-                fn=versailles_dual_rag_tool, name="versailles_expert", description="..."
+                fn=versailles_dual_rag_tool,
+                name="versailles_expert",
+                description="Answer questions about the Palace of Versailles. Provides comprehensive expert answers with historical, architectural, and cultural information about Versailles, its history, gardens, and notable figures like Louis XIV and Marie Antoinette.",
             ),
             FunctionTool.from_defaults(
                 fn=scrape_versailles_schedule,
                 name="get_versailles_schedule",
-                description="...",
+                description="Retrieves the opening hours, visitor numbers and schedule for the Palace of Versailles and its estate for a specific date. The input must be a date string in 'YYYY-MM-DD' format.",
             ),
             FunctionTool.from_defaults(
                 fn=search_places_in_versailles,
                 name="search_places_versailles",
-                description="...",
+                description="Search for specific places, buildings, or locations within Versailles using Google Places API. Returns place name, address, and place ID. Automatically adds 'Versailles' to the search query.",
             ),
-            FunctionTool.from_defaults(
-                fn=get_best_route_between_places,
-                name="get_walking_route",
-                description="...",
-            ),
+            # FunctionTool.from_defaults(
+            #     fn=get_best_route_between_places,
+            #     name="get_walking_route",
+            #     description="Calculate the optimal walking route between multiple places in Versailles. Takes a list of place names and returns the best route with duration, distance, and detailed walking directions.",
+            # ),
             FunctionTool.from_defaults(
                 fn=get_weather_in_versailles,
                 name="get_versailles_weather",
-                description="...",
+                description="Get weather forecast for Versailles. Takes the number of days (1-7) and returns detailed weather information including temperature, conditions, and precipitation.",
             ),
         ]
         logger.info(f"Loaded {len(self.tools)} tools.")
 
-        today_date = datetime.now().strftime("%Y-%m-%d")
-
-        # --- CORRECTION PROBABLE (Prompt Système) ---
-        # Un prompt minimaliste peut être la cause des réponses vides.
-        # Le LLM utilise les outils mais "oublie" de formuler une réponse finale.
-        system_prompt = (
-            f"Today's date is {today_date}. "
-            "You are a helpful assistant for Versailles. You must answer the user's query. "
-            "When necessary, you can use the provided tools to gather information. "
-            "After using tools, you MUST synthesize the results and provide a final, "
-            "comprehensive answer to the user. Do not just stop after calling tools. "
-            "Always formulate a final response."
-        )
-        # ------------------------------------------
-
         self.agent = FunctionAgent(
             llm=self.llm,
             tools=self.tools,
-            system_prompt=system_prompt,  # Utilisation du prompt amélioré
+            system_prompt="",  # Utilisation du prompt amélioré
             verbose=True,
+            max_tokens=120000,
         )
         logger.info("FunctionAgent initialized.")
 
@@ -163,7 +153,7 @@ class Agent:
         }
         return response
 
-    @observe(name="chat_completion_stream")
+    # @observe(name="chat_completion_stream")
     async def _internal_streamer(self, query) -> AsyncGenerator[str, None]:
         """Gestionnaire de streaming interne avec trace Langfuse et logging."""
         logger.info(
@@ -181,6 +171,8 @@ class Agent:
         )
 
         try:
+            self.found_places = []
+
             handler = self.agent.run(query)
             event_count = 0
             async for event in handler.stream_events():
@@ -200,6 +192,37 @@ class Agent:
                         f"ToolCallResult for {event.tool_name}. Output: {event.tool_output.content[:100]}..."
                     )
 
+                    if event.tool_name == "search_places_versailles":
+                        logger.debug(
+                            f"Intercepting 'search_places_versailles' result (stream)."
+                        )
+                        try:
+                            output_content = event.tool_output.content
+                            logger.info(output_content)
+                            if output_content:
+                                # Parser le JSON retourné par l'outil
+                                places_data = json.loads(output_content)
+                                if isinstance(places_data, dict):
+                                    logger.warning(
+                                        f"'search_places_versailles' (stream) returned a single dict. Appending it."
+                                    )
+                                    self.found_places.append(places_data)
+                                else:
+                                    logger.warning(
+                                        f"'search_places_versailles' (stream) output was not a list or dict, but {type(places_data)}."
+                                    )
+
+                        except json.JSONDecodeError:
+                            logger.error(
+                                f"Failed to decode JSON (stream) from 'search_places_versailles' output: {event.tool_output.content[:200]}..."
+                            )
+                        except Exception as e:
+                            logger.error(
+                                f"Error processing 'search_places_versailles' (stream) result: {e}",
+                                exc_info=True,
+                            )
+                        logging.info(f"self.found_places (stream): {self.found_places}")
+
             if event_count == 0:
                 logger.warning(
                     f"No events received from a_stream_events() for query: {query}"
@@ -207,6 +230,53 @@ class Agent:
                 yield self._format_chunk(
                     "[DEBUG: No events received from agent. Check LLM or agent config.]"
                 )
+
+            if len(self.found_places) > 1:
+                try:
+                    # 1. Extraire la liste des noms (str) à partir de la liste de dicts
+                    place_names = [
+                        place["displayName"]["text"]
+                        for place in self.found_places
+                        if "displayName" in place and "text" in place["displayName"]
+                    ]
+
+                    # 2. Appeler l'outil uniquement si on a des noms
+                    if place_names:
+                        logger.info(
+                            f"Génération de l'itinéraire (stream) pour : {place_names}"
+                        )
+                        walking_route = get_best_route_between_places(place_names)
+
+                        # 3. Envoyer l'itinéraire dans un chunk spécial
+                        if walking_route:
+                            logger.info("Yielding walking_route data in stream.")
+                            route_chunk = {
+                                "id": f"route-{uuid.uuid4()}",
+                                "object": "custom.walking_route",  # Objet spécial pour le client
+                                "created": int(datetime.now().timestamp()),
+                                "model": self.llm.model,
+                                "data": walking_route,
+                            }
+                            yield f"data: {json.dumps(route_chunk)}\n\n"
+
+                    else:
+                        logger.warning(
+                            "Lieux trouvés (stream), mais impossible d'extraire les 'displayName' pour l'itinéraire."
+                        )
+                except KeyError as e:
+                    logger.error(
+                        f"Erreur (stream) lors de l'extraction des noms de lieux : {e}. Structure de données inattendue."
+                    )
+                except Exception as e:
+                    logger.error(
+                        f"Erreur (stream) lors de la génération de l'itinéraire : {e}",
+                        exc_info=True,
+                    )
+            else:
+                logger.info(
+                    "Aucun lieu trouvé (stream) (self.found_places est vide), pas de génération d'itinéraire."
+                )
+            # --- Fin de la logique walking_route ---
 
         except Exception as e:
             logger.error(f"Error in _internal_streamer: {e}", exc_info=True)
@@ -280,7 +350,7 @@ class Agent:
 
                 if isinstance(event, AgentStream):
                     has_content = True
-                    logger.debug(f"AgentStream delta: '{event.delta}'")
+                    # logger.debug(f"AgentStream delta: '{event.delta}'")
                     if not response["choices"][0]["message"]["content"]:
                         response["choices"][0]["message"]["content"] = event.delta
                     else:
