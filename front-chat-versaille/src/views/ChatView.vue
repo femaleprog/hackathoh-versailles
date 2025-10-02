@@ -71,7 +71,8 @@ const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
 // --- CHANGE ---
 // Using a relative path for the API. Nginx will proxy any request starting with /api/
 // to the backend service defined in your nginx.conf.
-const backendApiUrl = "https://hackversailles-13-deus.ngrok.app/api";
+//const backendApiUrl = "https://hackversailles-13-deus.ngrok.app/api";
+const backendApiUrl = "http://localhost:8000";
 
 // --- Functions ---
 const selectLeg = (index) => {
