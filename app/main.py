@@ -2,7 +2,7 @@ import json
 import os
 import time
 from contextlib import asynccontextmanager
-
+from pathlib import Path
 
 from typing import List
 import uuid  # Import the uuid library
@@ -14,7 +14,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from llama_index.core.llms import ChatMessage as LlamaIndexChatMessage
 from llama_index.core.llms import MessageRole
-
+from fastapi.staticfiles import StaticFiles
 from app.schema import (
     ChatCompletionRequest,
     ChatMessage,  # Import ChatMessage
@@ -80,6 +80,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Proxy Mistral API (OpenAI-like)", lifespan=lifespan)
 
 
+
 origins = [
     "http://localhost:5173",  # Default Vue dev server port
     "http://127.0.0.1:5173",
@@ -95,10 +96,13 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+SPA_DIR = BASE_DIR / "front-chat-versaille" / "dist"
 
-@app.get("/")
-def root():
-    return "Bienvenue au Proxy Mistral API. Utilisez /v1/chat/completions pour les requêtes de chat."
+if not SPA_DIR.exists():
+    raise RuntimeError(f"Directory '{SPA_DIR}' does not exist")
+
+app.mount("/", StaticFiles(directory=str(SPA_DIR), html=True), name="spa")
 
 
 @app.post("/v1/chat/completions")
