@@ -67,12 +67,8 @@ const routeJson = ref(null);
 const selectedLegIndex = ref(0);
 const messages = ref([]);
 
-const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
-// --- CHANGE ---
-// Using a relative path for the API. Nginx will proxy any request starting with /api/
-// to the backend service defined in your nginx.conf.
-//const backendApiUrl = "https://hackversailles-13-deus.ngrok.app/api";
-const backendApiUrl = "http://localhost:8000";
+// Backend base URL: use env if provided, else same origin
+const backendApiUrl = import.meta.env.VITE_API_BASE_URL || window.location.origin;
 
 // --- Functions ---
 const selectLeg = (index) => {
@@ -100,7 +96,6 @@ const currentLegDetails = computed(() => {
 const loadConversation = async () => {
   messages.value = [];
   try {
-    // This will now correctly resolve to https://<your-ngrok-url>/api/v1/conversations/...
     const response = await fetch(
       `${backendApiUrl}/v1/conversations/${props.uuid}`
     );
@@ -143,70 +138,72 @@ const handleNewMessage = async (newMessageText) => {
     sender: "user",
   });
 
-  if (!apiKey) {
-    messages.value.push({
-      id: Date.now() + 1,
-      text: "Hélas, la clé API de Mistral n'est pas configurée côté client.",
-      sender: "bot",
-    });
-
-    await saveConversation();
-    emit("conversation-updated");
-    return;
-  }
-
+  // Build the OpenAI-style messages array from current history
   const apiMessages = messages.value.map((msg) => ({
     role: msg.sender === "bot" ? "assistant" : "user",
     content: msg.text,
   }));
+
+  // Prepare a placeholder bot message to stream into
   const botMessageId = Date.now() + 1;
+  messages.value.push({ id: botMessageId, text: "", sender: "bot" });
 
   try {
-    messages.value.push({ id: botMessageId, text: "", sender: "bot" });
-    const currentBotMessage = messages.value.find((m) => m.id === botMessageId);
-
     const response = await fetch(`${backendApiUrl}/v1/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        // Accept streaming from backend; Authorization not needed (key stays server-side)
+        Accept: "text/event-stream",
       },
       body: JSON.stringify({
-        model: "mistral-medium-2508",
+        model: "mistral-medium", // backend ignores or selects appropriate model
         messages: apiMessages,
         stream: true,
       }),
     });
 
-    if (!response.ok)
+    if (!response.ok) {
       throw new Error(`API request failed with status ${response.status}`);
+    }
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
+    const currentBotMessage = messages.value.find((m) => m.id === botMessageId);
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
+    // If backend doesn't stream, handle non-stream JSON once
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("text/event-stream") || !response.body) {
+      const data = await response.json().catch(() => null);
+      const reply =
+        data?.choices?.[0]?.message?.content ??
+        "(pas de réponse du serveur)";
+      if (currentBotMessage) currentBotMessage.text = reply;
+    } else {
+      // Stream (SSE) handling
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
 
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split("\n\n");
-      for (const line of lines) {
-        if (line.startsWith("data: ")) {
-          const data = line.substring(6);
-          if (data.trim() === "[DONE]") continue;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split("\n\n");
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          const data = line.substring(6).trim();
+          if (!data || data === "[DONE]") continue;
 
           try {
             const parsed = JSON.parse(data);
 
             if (parsed.object === "custom.walking_route") {
-              routeJson.value = parsed.data; // Assign the route data
-              isMapOpen.value = true; // Automatically open the map
-              selectLeg(0); // Select the first leg by default
+              routeJson.value = parsed.data;
+              isMapOpen.value = true;
+              selectLeg(0);
             } else {
-              const content = parsed.choices[0]?.delta?.content;
-              if (content && currentBotMessage) {
-                currentBotMessage.text += content;
+              const delta = parsed?.choices?.[0]?.delta?.content;
+              if (delta && currentBotMessage) {
+                currentBotMessage.text += delta;
               }
             }
           } catch (e) {
@@ -216,7 +213,7 @@ const handleNewMessage = async (newMessageText) => {
       }
     }
   } catch (error) {
-    console.error("Error calling Mistral API:", error);
+    console.error("Error calling backend:", error);
     const errorBotMessage = messages.value.find((m) => m.id === botMessageId);
     if (errorBotMessage) {
       errorBotMessage.text =
