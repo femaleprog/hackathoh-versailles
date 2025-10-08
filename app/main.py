@@ -96,13 +96,7 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-SPA_DIR = BASE_DIR / "front-chat-versaille" / "dist"
 
-if not SPA_DIR.exists():
-    raise RuntimeError(f"Directory '{SPA_DIR}' does not exist")
-
-app.mount("/", StaticFiles(directory=str(SPA_DIR), html=True), name="spa")
 
 
 @app.post("/v1/chat/completions")
@@ -321,3 +315,11 @@ async def save_conversation(conversation_id: str, payload: List[ChatMessage]):
     write_memory(memory)
 
     return JSONResponse(content={"status": "success", "uuid": conversation_id})
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+SPA_DIR = BASE_DIR / "front-chat-versaille" / "dist"
+
+if not SPA_DIR.exists():
+    raise RuntimeError(f"Directory '{SPA_DIR}' does not exist")
+
+app.mount("/", StaticFiles(directory=str(SPA_DIR), html=True), name="spa")
