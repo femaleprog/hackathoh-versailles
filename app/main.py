@@ -32,6 +32,17 @@ MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 SYSTEM_PROMPTS = load_prompts(
     filenames=["src/prompt_files/chat.txt", "src/prompt_files/eval.txt"]
 )
+# --- Personas ---
+PERSONA_PROMPTS = {
+    "marie_antoinette": (
+        "Tu es Marie-Antoinette. Parle avec l'élégance et la politesse de la cour de Versailles (XVIIIe siècle). "
+        "Emploie des tournures raffinées, vouvoie l’interlocuteur, reste claire, utile et factuelle."
+    ),
+    "louis_xiv": (
+        "Tu es Louis XIV. Parle d’un ton solennel et assuré, avec le « nous » de majesté à l’occasion. "
+        "Fais référence à l’étiquette et au devoir d’État, tout en restant concis et pratique."
+    ),
+}
 CONVERSATION_MEMORY_FILE = "conversation_memory.json"
 
 
@@ -102,36 +113,44 @@ app.add_middleware(
 @app.post("/v1/chat/completions")
 async def proxy_chat_completions(payload: ChatCompletionRequest, request: Request):
     """
-    Proxy pour l'agent LlamaIndex
+    Proxy pour l'agent LlamaIndex (avec personas)
     """
-    # Create a new session ID for each request
+    # Session
     session_id = request.headers.get("X-Session-ID") or f"session_{int(time.time())}"
 
-    # Create a new agent instance for this session
-    agent = Agent(session_id=session_id)
-    agent.agent.system_prompt = SYSTEM_PROMPTS["chat"]
+    # Persona from header/query/payload
+    persona = (
+        request.headers.get("X-Persona")
+        or request.query_params.get("persona")
+        or getattr(payload, "persona", None)
+    )
 
+    # Agent + system prompt (append persona style if any)
+    agent = Agent(session_id=session_id)
+    base_prompt = SYSTEM_PROMPTS["chat"]
+    if persona in PERSONA_PROMPTS:
+        base_prompt = base_prompt + "\n\n" + PERSONA_PROMPTS[persona]
+    agent.agent.system_prompt = base_prompt
+
+    # Extract query + build safe chat history
     try:
         query = payload.messages[-1].content
         chat_history_objects = payload.messages[:-1]
-
-        # Convertir en une liste d'objets LlamaIndexChatMessage
-        try:
-            chat_history_for_llamaindex = [
-                LlamaIndexChatMessage(
-                    role=MessageRole(
-                        msg.role
-                    ),  # Convertit le str ("user", "assistant") en Enum
-                    content=msg.content,
-                )
-                for msg in chat_history_objects
-            ]
-        except ValueError as e:
-            # Gérer le cas où le rôle n'est pas valide (par ex. "system" si non supporté)
-            print(f"Erreur lors de la conversion du rôle de message : {e}")
-        print(f"Session {session_id}: {query}")
     except (AttributeError, IndexError, TypeError):
         raise HTTPException(status_code=400, detail="Payload de messages invalide.")
+
+    chat_history_for_llamaindex = []
+    for msg in chat_history_objects:
+        try:
+            # keep only roles supported by LlamaIndex
+            if msg.role in ("user", "assistant"):
+                chat_history_for_llamaindex.append(
+                    LlamaIndexChatMessage(role=MessageRole(msg.role), content=msg.content)
+                )
+        except Exception as e:
+            print(f"Skipping message due to error: {e}")
+
+    print(f"Session {session_id} (persona={persona or 'default'}): {query}")
 
     try:
         if payload.stream:
@@ -139,13 +158,10 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
                 query=query, chat_history=chat_history_for_llamaindex
             )
             return StreamingResponse(final_generator, media_type="text/event-stream")
-
-        else:  # NON STREAM HANDLING - Use Query Planner
+        else:
             # Try Query Planner first
             try:
                 planner_response = await agent.chat_completion_with_planner(query=query)
-                print(f"Query Planner Response: {planner_response}")
-
                 response_content = planner_response["final_answer"]
                 final_response = {
                     "id": f"cmpl-{int(time.time())}",
@@ -153,33 +169,18 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
                     "created": int(time.time()),
                     "model": "mistral-medium-planner",
                     "choices": [
-                        {
-                            "index": 0,
-                            "message": {
-                                "role": "assistant",
-                                "content": response_content,
-                            },
-                            "finish_reason": "stop",
-                        }
+                        {"index": 0, "message": {"role": "assistant", "content": response_content}, "finish_reason": "stop"}
                     ],
-                    "usage": {
-                        "prompt_tokens": 0,
-                        "completion_tokens": 0,
-                        "total_tokens": 0,
-                    },
+                    "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
                     "query_analysis": planner_response.get("analysis", {}),
                     "tools_used": list(planner_response.get("tool_results", {}).keys()),
-                    "processing_method": planner_response.get(
-                        "processing_method", "query_planner"
-                    ),
+                    "processing_method": planner_response.get("processing_method", "query_planner"),
+                    "persona": persona or "default",
                 }
                 return JSONResponse(content=final_response, status_code=200)
-
             except Exception as planner_error:
                 print(f"Query Planner failed: {planner_error}")
-                # Fallback to original method
                 response = await agent.chat_completion_non_stream(query=query)
-                print(response)
                 response_content = response["choices"][0]["message"]["content"]
                 final_response = {
                     "id": f"cmpl-{int(time.time())}",
@@ -187,29 +188,16 @@ async def proxy_chat_completions(payload: ChatCompletionRequest, request: Reques
                     "created": int(time.time()),
                     "model": "mistral-medium-fallback",
                     "choices": [
-                        {
-                            "index": 0,
-                            "message": {
-                                "role": "assistant",
-                                "content": response_content,
-                            },
-                            "finish_reason": "stop",
-                        }
+                        {"index": 0, "message": {"role": "assistant", "content": response_content}, "finish_reason": "stop"}
                     ],
-                    "usage": {
-                        "prompt_tokens": 0,
-                        "completion_tokens": 0,
-                        "total_tokens": 0,
-                    },
+                    "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
                     "processing_method": "fallback",
                     "planner_error": str(planner_error),
+                    "persona": persona or "default",
                 }
                 return JSONResponse(content=final_response, status_code=200)
-
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Erreur interne du proxy: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Erreur interne du proxy: {str(e)}")
 
 
 @app.post("/v1/evaluate")
