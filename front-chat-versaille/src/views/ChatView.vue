@@ -2,14 +2,20 @@
   <div class="main-layout-container" :class="{ 'map-is-open': isMapOpen }">
     <div id="chat-container">
       <header class="chat-header">
-        <h1>Le Scribe Royal</h1>
-        <p>Votre humble serviteur digital</p>
+        <h1>Feels like Royalty</h1>
+        <p>I plan your visit to Chateau de versailles so that you don't have to</p>
         <button @click="newConversation" class="new-chat-btn">
-          Nouvelle Conversation
+          New conversation
         </button>
         <button @click="toggleMap" class="map-toggle-btn">
           {{ isMapOpen ? "Fermer la Carte" : "Ouvrir la Carte" }}
         </button>
+        <!-- Persona selection dropdown added here -->
+         <select v-model="persona" class="persona-select">
+          <option v-for="p in personas" :key="p.value" :value="p.value">
+            {{ p.label }}
+          </option>
+         </select>
       </header>
       <MessageDisplay :messages="messages" />
       <UserInput @send-message="handleNewMessage" />
@@ -51,7 +57,6 @@ import { useRouter } from "vue-router";
 
 const emit = defineEmits(["conversation-updated"]);
 
-// --- Props and Router ---
 const props = defineProps({
   uuid: {
     type: String,
@@ -60,17 +65,21 @@ const props = defineProps({
 });
 const router = useRouter();
 
-// --- Reactive State ---
 const isMapOpen = ref(false);
-
 const routeJson = ref(null);
 const selectedLegIndex = ref(0);
 const messages = ref([]);
 
-// Backend base URL: use env if provided, else same origin
 const backendApiUrl = import.meta.env.VITE_API_BASE_URL || window.location.origin;
 
-// --- Functions ---
+const personas = [
+  { value: "default", label: "Neutral" },
+  { value: "marie_antoinette", label: "Marie-Antoinette" },
+  { value: "louis_xiv", label: "Louis XIV" },
+];
+const persona = ref(localStorage.getItem("persona") || "default");
+watch(persona, (v) => localStorage.setItem("persona", v));
+
 const selectLeg = (index) => {
   selectedLegIndex.value = index;
 };
@@ -92,7 +101,6 @@ const currentLegDetails = computed(() => {
   };
 });
 
-// --- Conversation Memory Functions ---
 const loadConversation = async () => {
   messages.value = [];
   try {
@@ -132,102 +140,94 @@ const saveConversation = async () => {
 };
 
 const handleNewMessage = async (newMessageText) => {
-  messages.value.push({
-    id: Date.now(),
-    text: newMessageText,
-    sender: "user",
-  });
+  // 1) add user message
+  messages.value.push({ id: Date.now(), text: newMessageText, sender: "user" });
 
-  // Build the OpenAI-style messages array from current history
-  const apiMessages = messages.value.map((msg) => ({
-    role: msg.sender === "bot" ? "assistant" : "user",
-    content: msg.text,
+  // 2) build OpenAI-style history
+  const apiMessages = messages.value.map((m) => ({
+    role: m.sender === "bot" ? "assistant" : "user",
+    content: m.text,
   }));
 
-  // Prepare a placeholder bot message to stream into
-  const botMessageId = Date.now() + 1;
-  messages.value.push({ id: botMessageId, text: "", sender: "bot" });
+  // 3) placeholder bot message to stream into
+  const botId = Date.now() + 1;
+  messages.value.push({ id: botId, text: "", sender: "bot" });
 
   try {
-    const response = await fetch(`${backendApiUrl}/v1/chat/completions`, {
+    const res = await fetch(`${backendApiUrl}/v1/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // Accept streaming from backend; Authorization not needed (key stays server-side)
         Accept: "text/event-stream",
+        "X-Persona": persona.value,            // send selected persona
       },
       body: JSON.stringify({
-        model: "mistral-medium", // backend ignores or selects appropriate model
+        model: "mistral-medium",               // backend can override
         messages: apiMessages,
         stream: true,
       }),
     });
 
-    if (!response.ok) {
-      throw new Error(`API request failed with status ${response.status}`);
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      throw new Error(`HTTP ${res.status} ${body}`);
     }
 
-    const currentBotMessage = messages.value.find((m) => m.id === botMessageId);
+    const getBot = () => messages.value.find((m) => m.id === botId);
+    const ct = res.headers.get("content-type") || "";
 
-    // If backend doesn't stream, handle non-stream JSON once
-    const contentType = response.headers.get("content-type") || "";
-    if (!contentType.includes("text/event-stream") || !response.body) {
-      const data = await response.json().catch(() => null);
-      const reply =
-        data?.choices?.[0]?.message?.content ??
-        "(pas de réponse du serveur)";
-      if (currentBotMessage) currentBotMessage.text = reply;
-    } else {
-      // Stream (SSE) handling
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
+    // 4) non-stream fallback
+    if (!ct.includes("text/event-stream") || !res.body) {
+      const data = await res.json().catch(() => null);
+      getBot().text = data?.choices?.[0]?.message?.content ?? "(pas de réponse)";
+      return;
+    }
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+    // 5) SSE streaming
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
 
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split("\n\n");
-        for (const line of lines) {
-          if (!line.startsWith("data: ")) continue;
-          const data = line.substring(6).trim();
-          if (!data || data === "[DONE]") continue;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
 
-          try {
-            const parsed = JSON.parse(data);
+      buffer += decoder.decode(value, { stream: true });
+      const parts = buffer.split("\n\n");
+      buffer = parts.pop(); // keep last incomplete part
 
-            if (parsed.object === "custom.walking_route") {
-              routeJson.value = parsed.data;
-              isMapOpen.value = true;
-              selectLeg(0);
-            } else {
-              const delta = parsed?.choices?.[0]?.delta?.content;
-              if (delta && currentBotMessage) {
-                currentBotMessage.text += delta;
-              }
-            }
-          } catch (e) {
-            console.error("Could not parse stream chunk:", data, e);
+      for (const part of parts) {
+        if (!part.startsWith("data: ")) continue;
+        const data = part.slice(6).trim();
+        if (!data || data === "[DONE]") continue;
+
+        try {
+          const j = JSON.parse(data);
+
+          if (j.object === "custom.walking_route") {
+            routeJson.value = j.data;
+            isMapOpen.value = true;
+            selectedLegIndex.value = 0;
+          } else {
+            const delta = j?.choices?.[0]?.delta?.content;
+            if (delta) getBot().text += delta;
           }
+        } catch (e) {
+          console.error("SSE parse error:", e, data);
         }
       }
     }
-  } catch (error) {
-    console.error("Error calling backend:", error);
-    const errorBotMessage = messages.value.find((m) => m.id === botMessageId);
-    if (errorBotMessage) {
-      errorBotMessage.text =
-        "Hélas, une erreur est survenue lors de la communication avec le Scribe. Veuillez réessayer.";
-    }
+  } catch (err) {
+    console.error(err);
+    const b = messages.value.find((m) => m.id === botId);
+    if (b) b.text = "Hélas, une erreur est survenue. Veuillez réessayer.";
   } finally {
     await saveConversation();
     emit("conversation-updated");
   }
 };
 
-onMounted(() => {
-  loadConversation();
-});
+onMounted(loadConversation);
 watch(() => props.uuid, loadConversation);
 </script>
 
@@ -407,4 +407,13 @@ watch(() => props.uuid, loadConversation);
   color: white;
   border-color: var(--color-gold);
 }
+.persona-select 
+{ position: absolute;
+ right: 160px; top: 50%;
+  transform: translateY(-50%);
+  padding: 6px 10px;
+  border: 1px solid var(--border-light); 
+  border-radius: 6px; 
+  background: #fff; 
+  font-family: "Source Serif Pro", serif; }
 </style>
