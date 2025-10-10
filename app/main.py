@@ -1,3 +1,5 @@
+from app.db import get_conn, init_db
+
 import json
 import os
 import time
@@ -77,6 +79,8 @@ def write_memory(data: dict):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    init_db()
+
     app.state.agent = Agent()
 
     app.state.httpx_client = httpx.AsyncClient(base_url="https://api.mistral.ai")
