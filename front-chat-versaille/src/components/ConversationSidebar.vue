@@ -3,6 +3,7 @@
     <h2>Mes Conversations</h2>
     <ul>
       <li v-for="conv in conversations" :key="conv.uuid">
+
         <RouterLink
           :to="`/chat_interface/${conv.uuid}`"
           class="conversation-link"
@@ -15,37 +16,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
 import { RouterLink } from "vue-router";
 
-const conversations = ref([]);
-//const backendApiUrl = "https://hackversailles-13-deus.ngrok.app/api";
-const backendApiUrl = "http://localhost:8000";
-
-/**
- * Fetches the list of conversations from the backend.
- */
-const fetchConversations = async () => {
-  try {
-    const response = await fetch(`${backendApiUrl}/v1/conversations`);
-    if (!response.ok) {
-      throw new Error("Failed to fetch conversation list");
-    }
-    const data = await response.json();
-    conversations.value = data.reverse();
-  } catch (error) {
-    console.error("Error fetching conversations:", error);
-  }
-};
-
-onMounted(fetchConversations);
-
-// --- ADDED ---
-// Expose the fetchConversations method to the parent component.
-defineExpose({
-  fetchConversations,
+const props = defineProps({
+  conversations: { type: Array, default: () => [] },
 });
 </script>
+
 
 <style scoped>
 /* ... styles remain unchanged ... */

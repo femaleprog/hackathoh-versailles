@@ -216,4 +216,4 @@ node_modules
 test_results_*.json
 test_output.log
 test_agent_simple.py
-test_stream.py
+test_stream.pydata.sqlite3

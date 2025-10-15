@@ -1,3 +1,5 @@
+from app.db import get_conn, init_db
+
 import json
 import os
 import time
@@ -26,6 +28,31 @@ from src.agent import Agent
 from src.prompts import load_prompts
 from fastapi.responses import RedirectResponse
 
+def db_get_messages(conversation_id: str):
+    with get_conn() as c:
+        cur = c.execute(
+            "SELECT role, content FROM messages WHERE conversation_id=? ORDER BY id ASC",
+            (conversation_id,)
+        )
+        return [dict(role=r["role"], content=r["content"]) for r in cur.fetchall()]
+
+def db_upsert_conversation(conversation_id: str, title: str | None = None):
+    with get_conn() as c:
+        c.execute("""
+            INSERT INTO conversations (id, title)
+            VALUES (?, ?)
+            ON CONFLICT(id) DO UPDATE SET updated_at=CURRENT_TIMESTAMP
+        """, (conversation_id, title))
+
+def db_replace_messages(conversation_id: str, msgs: list[dict]):
+    with get_conn() as c:
+        c.execute("DELETE FROM messages WHERE conversation_id=?", (conversation_id,))
+        c.executemany(
+            "INSERT INTO messages (conversation_id, role, content) VALUES (?,?,?)",
+            [(conversation_id, m["role"], m["content"]) for m in msgs]
+        )
+        c.execute("UPDATE conversations SET updated_at=CURRENT_TIMESTAMP WHERE id=?", (conversation_id,))
+
 load_dotenv()
 
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
@@ -47,6 +74,18 @@ CONVERSATION_MEMORY_FILE = "conversation_memory.json"
 
 
 # --- Helper functions for JSON memory ---
+# --- DB helpers for conversation list ---
+def db_list_conversations():
+    with get_conn() as c:
+        cur = c.execute("""
+            SELECT
+              id,
+              COALESCE(NULLIF(title, ''), 'Nouvelle Conversation') AS title,
+              updated_at
+            FROM conversations
+            ORDER BY updated_at DESC
+        """)
+        return [dict(uuid=r["id"], title=r["title"]) for r in cur.fetchall()]
 
 
 def read_memory() -> dict:
@@ -77,6 +116,8 @@ def write_memory(data: dict):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    init_db()
+
     app.state.agent = Agent()
 
     app.state.httpx_client = httpx.AsyncClient(base_url="https://api.mistral.ai")
@@ -244,65 +285,28 @@ async def chat_redirect(payload: EvalCompletionRequest, request: Request):
 
 @app.get("/v1/conversations", status_code=200)
 async def get_conversations_list():
-    """Returns a list of all conversation IDs and their first user message."""
+    return JSONResponse(content=db_list_conversations())
 
-    memory = read_memory()
-
-    conv_list = []
-
-    for conv_id, data in memory.items():
-
-        first_message = "Nouvelle Conversation"
-
-        # Find the first user message for a better title
-
-        if data.get("messages"):
-
-            for msg in data["messages"]:
-
-                if msg.get("role") == "user":
-
-                    first_message = msg.get("content", first_message)
-
-                    break
-
-        conv_list.append({"uuid": conv_id, "title": first_message})
-
-    return JSONResponse(content=conv_list)
 
 
 @app.get("/v1/conversations/{conversation_id}", status_code=200)
 async def get_conversation_by_id(conversation_id: str):
-    """Returns the full message history for a given conversation UUID."""
-
-    memory = read_memory()
-
-    conversation = memory.get(conversation_id)
-
-    if not conversation:
-
+    msgs = db_get_messages(conversation_id)
+    if not msgs:
         raise HTTPException(status_code=404, detail="Conversation non trouvée.")
-
-    return JSONResponse(content=conversation.get("messages", []))
-
+    return JSONResponse(content=msgs)
 
 @app.post("/v1/conversations/{conversation_id}", status_code=200)
-async def save_conversation(conversation_id: str, payload: List[ChatMessage]):
-    """Saves or updates the message history for a given conversation UUID."""
-
+async def save_conversation(conversation_id: str, payload: List[ChatMessage] = Body(...)):
     if not payload:
-
-        raise HTTPException(
-            status_code=400, detail="Le contenu des messages ne peut être vide."
-        )
-
-    memory = read_memory()
-
-    memory[conversation_id] = {"messages": [msg.dict() for msg in payload]}
-
-    write_memory(memory)
-
+        raise HTTPException(status_code=400, detail="Le contenu des messages ne peut être vide.")
+    # use first user message as title (trim length)
+    title = next((m.content for m in payload if m.role == "user"), "Nouvelle Conversation")[:80]
+    db_upsert_conversation(conversation_id, title=title)
+    db_replace_messages(conversation_id, [m.dict() for m in payload])
     return JSONResponse(content={"status": "success", "uuid": conversation_id})
+
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SPA_DIR = BASE_DIR / "front-chat-versaille" / "dist"

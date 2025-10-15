@@ -1,14 +1,31 @@
 <template>
   <div class="app-wrapper">
-    <ConversationSidebar />
+    <ConversationSidebar :conversations="conversations" />
     <main class="main-content">
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <component :is="Component" @conversation-updated="loadConversations" />
+      </router-view>
+
     </main>
   </div>
 </template>
 
 <script setup>
 import ConversationSidebar from "@/components/ConversationSidebar.vue";
+import { ref, onMounted } from "vue";
+
+const conversations = ref([]);
+const backendApiUrl = import.meta.env.VITE_API_BASE_URL || window.location.origin;
+
+const loadConversations = async () => {
+  const r = await fetch(`${backendApiUrl}/v1/conversations`, {
+    headers: { "Cache-Control": "no-cache" },
+  });
+  conversations.value = await r.json();
+};
+
+onMounted(loadConversations);
+
 </script>
 
 <style>

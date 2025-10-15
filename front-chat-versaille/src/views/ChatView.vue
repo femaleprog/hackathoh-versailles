@@ -142,7 +142,10 @@ const saveConversation = async () => {
 const handleNewMessage = async (newMessageText) => {
   // 1) add user message
   messages.value.push({ id: Date.now(), text: newMessageText, sender: "user" });
-
+  if (messages.value.length === 1) {
+    await saveConversation();
+    
+  }
   // 2) build OpenAI-style history
   const apiMessages = messages.value.map((m) => ({
     role: m.sender === "bot" ? "assistant" : "user",
@@ -225,6 +228,13 @@ const handleNewMessage = async (newMessageText) => {
     await saveConversation();
     emit("conversation-updated");
   }
+};
+
+// Function to refresh conversation list (optional)
+const fetchConversationsList = async () => {
+  const response = await fetch(`${backendApiUrl}/v1/conversations`);
+  const data = await response.json();
+  conversations.value = data;  // Refresh the conversation list with updated data
 };
 
 onMounted(loadConversation);
