@@ -39,8 +39,8 @@ def db_get_messages(conversation_id: str):
 def db_upsert_conversation(conversation_id: str, title: str | None = None):
     with get_conn() as c:
         c.execute("""
-            INSERT INTO conversations (id, title)
-            VALUES (?, ?)
+            INSERT INTO conversations (id, title, updated_at)
+            VALUES (?, ?, CURRENT_TIMESTAMP)
             ON CONFLICT(id) DO UPDATE SET updated_at=CURRENT_TIMESTAMP
         """, (conversation_id, title))
 
@@ -78,10 +78,7 @@ CONVERSATION_MEMORY_FILE = "conversation_memory.json"
 def db_list_conversations():
     with get_conn() as c:
         cur = c.execute("""
-            SELECT
-              id,
-              COALESCE(NULLIF(title, ''), 'Nouvelle Conversation') AS title,
-              updated_at
+            SELECT id, title, updated_at
             FROM conversations
             ORDER BY updated_at DESC
         """)
