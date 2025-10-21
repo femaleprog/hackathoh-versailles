@@ -1,6 +1,6 @@
 <template>
   <div class="app-wrapper">
-    <ConversationSidebar :conversations="conversations" />
+    <ConversationSidebar :conversations="conversations" @conversation-updated="loadConversations"/>
     <main class="main-content">
       <router-view v-slot="{ Component }">
         <component :is="Component" @conversation-updated="loadConversations" />

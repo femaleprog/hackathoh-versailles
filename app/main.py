@@ -102,6 +102,12 @@ def read_memory() -> dict:
 
             return {}
 
+def db_delete_conversation(conversation_id: str):
+    with get_conn() as c:
+        # If you don't have ON DELETE CASCADE, delete messages first:
+        c.execute("DELETE FROM messages WHERE conversation_id = ?", (conversation_id,))
+        c.execute("DELETE FROM conversations WHERE id = ?", (conversation_id,))
+
 
 def write_memory(data: dict):
     """Writes the conversation memory to the JSON file."""
@@ -134,6 +140,7 @@ origins = [
     "http://localhost:5173",  # Default Vue dev server port
     "http://127.0.0.1:5173",
     "https://hackversailles-13-deus.ngrok.app",
+    "http://192.168.1.17:5173",
     # Add any other origins you need
 ]
 
@@ -303,7 +310,13 @@ async def save_conversation(conversation_id: str, payload: List[ChatMessage] = B
     db_replace_messages(conversation_id, [m.dict() for m in payload])
     return JSONResponse(content={"status": "success", "uuid": conversation_id})
 
-
+@app.delete("/v1/conversations/{conversation_id}", status_code=200)
+async def delete_conversation(conversation_id: str):
+    try:
+        db_delete_conversation(conversation_id)
+        return JSONResponse({"status": "success"})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SPA_DIR = BASE_DIR / "front-chat-versaille" / "dist"
