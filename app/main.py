@@ -108,6 +108,23 @@ def db_delete_conversation(conversation_id: str):
         c.execute("DELETE FROM messages WHERE conversation_id = ?", (conversation_id,))
         c.execute("DELETE FROM conversations WHERE id = ?", (conversation_id,))
 
+def db_rename_conversation(conversation_id: str, new_title: str):
+    new_title = (new_title or "").strip()
+    if not new_title:
+        raise ValueError("Title cannot be empty")
+
+    with get_conn() as c:
+        cur = c.execute(
+            """
+            UPDATE conversations
+            SET title = ? WHERE id = ?
+            """,
+            (new_title, conversation_id),
+        )
+        if cur.rowcount == 0:
+            # optional: create if it doesn't exist
+            raise ValueError("Conversation not fousnd")
+
 
 def write_memory(data: dict):
     """Writes the conversation memory to the JSON file."""
@@ -317,6 +334,19 @@ async def delete_conversation(conversation_id: str):
         return JSONResponse({"status": "success"})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+from pydantic import BaseModel
+
+class RenamePayload(BaseModel):
+    title: str
+
+@app.patch("/v1/conversations/{conversation_id}", status_code=200)
+async def rename_conversation(conversation_id: str, payload: RenamePayload):
+    try:
+        db_rename_conversation(conversation_id, payload.title)
+        return {"status": "success"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SPA_DIR = BASE_DIR / "front-chat-versaille" / "dist"
