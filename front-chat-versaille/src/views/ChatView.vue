@@ -426,4 +426,31 @@ watch(() => props.uuid, loadConversation);
   border-radius: 6px; 
   background: #fff; 
   font-family: "Source Serif Pro", serif; }
+  /* Add position relative to the list item to ensure absolute positioning works correctly */
+.conversation-item {
+  position: relative;  /* Add this to allow absolute positioning of the 3 dots */
+}
+
+.conversation-item:hover .three-dots-menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  z-index: 10; /* Increase z-index for visibility */
+}
+
+/* Styling for the 3 dots menu */
+.three-dots-menu {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 1; /* Ensuring it's above other content */
+}
+
 </style>
