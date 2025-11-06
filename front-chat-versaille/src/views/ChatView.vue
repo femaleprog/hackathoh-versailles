@@ -1,11 +1,10 @@
 <template>
   <div class="main-layout-container" :class="{ 'map-is-open': isMapOpen }">
     <div id="chat-container">
-      <header class="chat-header">
-        <h1>Feels like Royalty</h1>
-        <p>I plan your visit to Chateau de versailles so that you don't have to</p>
+      <header class="chat-header" :style="{ backgroundImage: `url(${headerImg})` }">
+        <span class="chat-title">Feels like Royalty</span>
         <button @click="newConversation" class="new-chat-btn">
-          New conversation
+          New conversations
         </button>
         <button @click="toggleMap" class="map-toggle-btn">
           {{ isMapOpen ? "Fermer la Carte" : "Ouvrir la Carte" }}
@@ -49,6 +48,7 @@
 </template>
 
 <script setup>
+import headerImg from '@/assets/header-chateau-versailles.png'
 import MessageDisplay from "@/components/MessageDisplay.vue";
 import UserInput from "@/components/UserInput.vue";
 import MapDisplay from "@/components/MapDisplay.vue";
@@ -299,16 +299,6 @@ watch(() => props.uuid, loadConversation);
   opacity: 1;
 }
 
-.chat-header {
-  position: relative;
-  padding: 20px;
-  background-color: #fff;
-  color: var(--text-primary);
-  text-align: center;
-  border-bottom: 1px solid var(--border-light);
-  font-family: "Cormorant Garamond", serif;
-  flex-shrink: 0;
-}
 
 .chat-header h1 {
   margin: 0;
@@ -452,5 +442,61 @@ watch(() => props.uuid, loadConversation);
   transition: opacity 0.15s ease;
   z-index: 1; /* Ensuring it's above other content */
 }
+.chat-header {
+  position: relative;
+  height: 120px;               /* slim banner */
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  border-bottom: 1px solid var(--border-light);
+  padding: 12px 20px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Optional subtle royal overlay */
+.chat-header::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0; height: 28px;
+  background: linear-gradient(180deg, rgba(250,246,239,0) 0%, var(--background-main) 100%);
+  pointer-events: none;
+}
+.chat-title {
+  position: relative;
+  z-index: 1;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--bordeaux, #6A1F2B);
+  padding: 4px 10px;
+  border: 1px solid color-mix(in oklab, var(--color-gold) 40%, transparent);
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--ivory, #FAF6EF) 80%, transparent);
+  box-shadow: 0 6px 16px rgba(59,47,47,.08);
+}
+.new-chat-btn,
+.map-toggle-btn,
+.persona-select {
+  position: absolute;
+  top: 12px;
+  height: 34px;
+}
+
+.new-chat-btn { left: 20px; }
+.persona-select { right: 160px; }
+.map-toggle-btn { right: 20px; }
+
+@media (max-width: 640px) {
+  .chat-header { height: 90px; }
+  .chat-title  { font-size: 22px; padding: 2px 8px; }
+  .persona-select { right: 140px; }
+}
+
 
 </style>

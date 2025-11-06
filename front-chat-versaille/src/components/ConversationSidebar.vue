@@ -152,6 +152,17 @@ h2 {
   font-size: 1.8rem;
 }
 
+h2::after {
+  content: "";
+  display: block;
+  width: 64%;
+  height: 2px;
+  margin: 8px auto 0;
+  background: linear-gradient(90deg, transparent, var(--bordeaux), transparent);
+  opacity: .65; /* was .35 */
+}
+
+
 ul {
   list-style: none;
   padding: 0;
@@ -170,6 +181,11 @@ li {
   visibility: visible;
   pointer-events: auto;
   z-index: 10;
+}
+
+.conversation-item:hover .conversation-link {
+  background: #fff5f7;              /* light Bordeaux wash */
+  border-color: var(--bordeaux);     /* <-- stronger border */
 }
 
 .three-dots-menu {
@@ -205,10 +221,10 @@ li {
 }
 
 .router-link-exact-active {
-  background-color: var(--color-gold);
-  color: white;
-  font-weight: 600;
-  border-color: var(--color-gold);
+  background: #fff5f7;
+  border-color: var(--bordeaux);
+  color: var(--deep-brown);
+  box-shadow: 0 0 0 2px rgba(106,31,43,0.18); /* Bordeaux glow */
 }
 .router-link-exact-active:hover {
   color: var(--text-primary);
@@ -236,4 +252,10 @@ li {
   border-radius: 5px;
   width: 200px;
 }
+.three-dots-menu:hover {
+  background: rgba(106,31,43,0.12);
+  color: var(--bordeaux);
+}
+.conv-menu-item:hover { background: rgba(106,31,43,0.10); }
+.conv-menu-item.danger { color: var(--bordeaux); }
 </style>
