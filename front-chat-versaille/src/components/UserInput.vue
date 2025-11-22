@@ -33,7 +33,6 @@
 
 <script>
 import { ref } from "vue";
-import { Mistral } from "@mistralai/mistralai";
 
 export default {
   name: "UserInput",
@@ -42,9 +41,8 @@ export default {
     const newMessage = ref("");
     const isRecording = ref(false);
 
-    const apiKey =
-      import.meta.env.VITE_MISTRAL_API_KEY || "YOUR_MISTRAL_API_KEY";
-    const client = new Mistral({ apiKey });
+    const backendApiUrl =
+      import.meta.env.VITE_API_BASE_URL || window.location.origin;
 
     let mediaRecorder = null;
     let audioChunks = [];
@@ -58,17 +56,25 @@ export default {
 
     const transcribeAudio = async (audioFile) => {
       try {
-        // Update UI to show processing
         newMessage.value = "Transcription en cours...";
-
-        const transcriptionResponse =
-          await client.audio.transcriptions.complete({
-            model: "voxtral-mini-latest",
-            file: audioFile,
-          });
-
-        // Update the input field with the transcribed text
-        newMessage.value = transcriptionResponse.text;
+        const formData = new FormData();
+        formData.append(
+          "file",
+          audioFile,
+          audioFile.name || "user_recording.webm"
+        );
+        const response = await fetch(`${backendApiUrl}/v1/audio/transcribe`, {
+          method: "POST",
+          body: formData,
+        });
+        if (!response.ok) {
+          const errorBody = await response.text().catch(() => "");
+          throw new Error(
+            `HTTP ${response.status}${errorBody ? `: ${errorBody}` : ""}`
+          );
+        }
+        const data = await response.json();
+        newMessage.value = data?.text || "";
       } catch (error) {
         console.error("Error during transcription:", error);
         newMessage.value = "Erreur de transcription. Veuillez réessayer.";
@@ -148,6 +154,8 @@ export default {
   background-color: var(--background-main);
   border-top: 1px solid var(--border-light);
   flex-shrink: 0; /* Prevents input area from shrinking */
+  flex: 1 1 auto;
+  width: 100%;
 }
 
 .input-container {
@@ -155,10 +163,13 @@ export default {
   display: flex;
   flex-grow: 1;
   align-items: center;
+  width: 100%;
+  flex: 1 1 auto;
 }
 
 .text-input {
   flex-grow: 1;
+  width: 100%;
   padding: 12px 50px 12px 20px; /* Increased right padding for the mic */
   border-radius: 8px; /* Less rounded for a more formal look */
   border: 1px solid var(--border-light);

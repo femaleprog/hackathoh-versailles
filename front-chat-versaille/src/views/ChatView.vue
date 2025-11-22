@@ -17,7 +17,12 @@
          </select>
       </header>
       <MessageDisplay :messages="messages" />
-      <UserInput @send-message="handleNewMessage" />
+      <div class="input-bar">
+        <UserInput @send-message="handleNewMessage" />
+        <button class="mic-btn" @click="toggleRecording">
+          {{ isRecording ? "■ Stop" : "🎤 Talk" }}
+        </button>
+      </div>
     </div>
 
     <div class="map-area" :class="{ 'is-open': isMapOpen }">
@@ -239,6 +244,47 @@ const fetchConversationsList = async () => {
 
 onMounted(loadConversation);
 watch(() => props.uuid, loadConversation);
+
+const isRecording = ref(false);
+let mediaRecorder = null;
+let chunks = [];
+
+const toggleRecording = async () => {
+  if (!isRecording.value) {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+    chunks = [];
+
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size) chunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+      const blob = new Blob(chunks, { type: "audio/webm" });
+      const form = new FormData();
+      form.append("file", blob, "clip.webm");
+
+      try {
+        const r = await fetch(`${backendApiUrl}/v1/audio/transcribe`, {
+          method: "POST",
+          body: form,
+        });
+        const { text } = await r.json();
+        if (text?.trim()) await handleNewMessage(text.trim());
+      } catch (e) {
+        console.error("STT failed:", e);
+      }
+    };
+
+    mediaRecorder.start();
+    isRecording.value = true;
+  } else {
+    mediaRecorder?.stop();
+    isRecording.value = false;
+  }
+};
+
+
 </script>
 
 <style scoped>
@@ -496,6 +542,28 @@ watch(() => props.uuid, loadConversation);
   .chat-header { height: 90px; }
   .chat-title  { font-size: 22px; padding: 2px 8px; }
   .persona-select { right: 140px; }
+}
+
+.input-bar {
+  display: flex;
+  align-items: stretch;
+  padding: 8px 12px;
+  border-top: 1px solid var(--border-light);
+  background: #fff;
+  width: 100%;
+}
+
+.mic-btn {
+  appearance: none;
+  border: 1px solid var(--border-light);
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+.mic-btn:hover {
+  background: #f6f2e9;
 }
 
 
