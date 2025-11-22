@@ -10,9 +10,8 @@ from typing import List
 import uuid  # Import the uuid library
 import httpx
 from dotenv import load_dotenv
-from fastapi import Body, FastAPI, HTTPException, Request
+from fastapi import Body, FastAPI, HTTPException, Request, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from llama_index.core.llms import ChatMessage as LlamaIndexChatMessage
 from llama_index.core.llms import MessageRole
@@ -20,13 +19,15 @@ from fastapi.staticfiles import StaticFiles
 from app.schema import (
     ChatCompletionRequest,
     ChatMessage,  # Import ChatMessage
-    Conversation,  # Import new Conversation schema
     EvalCompletionAnswer,
     EvalCompletionRequest,
 )
 from src.agent import Agent
 from src.prompts import load_prompts
-from fastapi.responses import RedirectResponse
+from mistralai import Mistral
+
+transcription_model = "voxtral-mini-latest"
+
 
 def db_get_messages(conversation_id: str):
     with get_conn() as c:
@@ -56,6 +57,7 @@ def db_replace_messages(conversation_id: str, msgs: list[dict]):
 load_dotenv()
 
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
+client = Mistral(api_key = MISTRAL_API_KEY)
 SYSTEM_PROMPTS = load_prompts(
     filenames=["src/prompt_files/chat.txt", "src/prompt_files/eval.txt"]
 )
@@ -353,5 +355,48 @@ SPA_DIR = BASE_DIR / "front-chat-versaille" / "dist"
 
 if not SPA_DIR.exists():
     raise RuntimeError(f"Directory '{SPA_DIR}' does not exist")
+
+@app.post("/v1/audio/transcribe")
+async def transcribe_audio(request: Request, file: UploadFile = File(...)):
+    if not MISTRAL_API_KEY:
+        raise HTTPException(status_code=500, detail="MISTRAL_API_KEY is not configured.")
+
+    contents = await file.read()
+    if not contents:
+        raise HTTPException(status_code=400, detail="Le fichier audio est vide.")
+
+    filename = file.filename or "audio.webm"
+    content_type = file.content_type or "audio/webm"
+
+    http_client: httpx.AsyncClient = request.app.state.httpx_client
+    try:
+        response = await http_client.post(
+            "/v1/audio/transcriptions",
+            headers={"Authorization": f"Bearer {MISTRAL_API_KEY}"},
+            data={"model": transcription_model},
+            files={"file": (filename, contents, content_type)},
+        )
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"Impossible de contacter Mistral: {exc}") from exc
+
+    try:
+        payload = response.json()
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=502, detail="Réponse inattendue de Mistral lors de la transcription."
+        ) from exc
+
+    if response.status_code >= 400:
+        detail = payload.get("message") or payload
+        raise HTTPException(
+            status_code=response.status_code,
+            detail=f"Erreur Mistral lors de la transcription: {detail}",
+        )
+
+    text = payload.get("text")
+    if not text:
+        raise HTTPException(status_code=502, detail="Mistral n'a pas renvoyé de texte transcrit.")
+
+    return {"text": text.strip()}
 
 app.mount("/", StaticFiles(directory=str(SPA_DIR), html=True), name="spa")
